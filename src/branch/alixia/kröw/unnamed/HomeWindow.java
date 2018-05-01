@@ -47,8 +47,10 @@ public class HomeWindow extends UWindowBase {
 
 		content.setPadding(new Insets(90, 80, 0, 80));
 
-		
-		
+		menuBar.setBorder(
+				new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, null, new BorderWidths(0, 0, 2, 0))));
+		setBorder(FXTools.getBorderFromColor(Color.BLUE, 2));
+
 	}
 
 	private final DoubleProperty minimumItemSizeProperty = new SimpleDoubleProperty(140);
@@ -103,7 +105,9 @@ public class HomeWindow extends UWindowBase {
 			minWidthProperty().bind(minimumItemSizeProperty);
 			minHeightProperty().bind(minimumItemSizeProperty);
 
-			wrapper.setFillWidth(true);
+			wrapper.maxWidthProperty().bind(minimumItemSizeProperty);
+			nameText.wrappingWidthProperty().bind(minimumItemSizeProperty);
+
 			wrapper.setAlignment(Pos.CENTER);
 
 			nameText.setFont(Font.font("Brush Script MT", 32));

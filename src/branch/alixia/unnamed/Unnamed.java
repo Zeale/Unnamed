@@ -21,7 +21,7 @@ public final class Unnamed extends Application {
 		primaryStage.initStyle(StageStyle.TRANSPARENT);
 
 		HomeWindow root = new HomeWindow();
-		root.new Item() {
+		root.new Item("Testasdfasdfasdfasdfasdf") {
 
 			@Override
 			protected void activate() {
