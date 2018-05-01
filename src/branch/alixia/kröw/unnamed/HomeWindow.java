@@ -4,8 +4,11 @@ import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.unnamed.UWindowBase;
 import javafx.animation.Transition;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Border;
@@ -17,11 +20,17 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 public class HomeWindow extends UWindowBase {
 
 	private static final double DEFAULT_BORDER_WIDTH = 3;
+	private final static String UNNAMED_STRING = new String("Unnamed");
+	private final static DropShadow DEFAULT_ITEM_SHADOW_EFFECT = new DropShadow(5, 30, 30, Color.BLACK);
+	private static final Color DEFAULT_ITEM_COLOR = Color.BLUE;
 
 	protected final TilePane content = new TilePane();
 	protected final ScrollPane root = new ScrollPane(content);
@@ -38,20 +47,30 @@ public class HomeWindow extends UWindowBase {
 
 		content.setPadding(new Insets(90, 80, 0, 80));
 
+		
+		
 	}
 
 	private final DoubleProperty minimumItemSizeProperty = new SimpleDoubleProperty(140);
 
 	public abstract class Item extends StackPane {
 
-		{
-			minWidthProperty().bind(minimumItemSizeProperty);
-			minHeightProperty().bind(minimumItemSizeProperty);
+		// Does SimpleStringProperty guarantee to return the EXACT same String you give
+		// it? Or just an equal String? Probably the former, but whatever. This works
+		// too.
+		private final ObjectProperty<String> name = new SimpleObjectProperty<>(UNNAMED_STRING);
+
+		public Item() {
+			this(UNNAMED_STRING);
+		}
+
+		public Item(String name) {
+			this.name.set(name);
 		}
 
 		private final class ItemAnimation extends Transition {
 
-			private Color fromValue = new Color(0.8, 0, 0, 1), toValue = new Color(1, 1, 1, 1);
+			private Color fromValue = DEFAULT_ITEM_COLOR, toValue = DEFAULT_ITEM_COLOR;
 
 			{
 				setCycleDuration(Duration.seconds(0.6));
@@ -76,9 +95,21 @@ public class HomeWindow extends UWindowBase {
 
 		private final ItemAnimation animation = new ItemAnimation();
 
-		private final VBox wrapper = new VBox(15, this);
+		private final Text nameText = new Text();
+		private final VBox wrapper = new VBox(15, this, nameText);
 
 		{
+
+			minWidthProperty().bind(minimumItemSizeProperty);
+			minHeightProperty().bind(minimumItemSizeProperty);
+
+			wrapper.setFillWidth(true);
+			wrapper.setAlignment(Pos.CENTER);
+
+			nameText.setFont(Font.font("Brush Script MT", 32));
+			nameText.setTextAlignment(TextAlignment.CENTER);
+			nameText.textProperty().bind(name);
+
 			setOnMouseEntered(event -> {
 				animation.setRate(1);
 				animation.play();
@@ -89,15 +120,17 @@ public class HomeWindow extends UWindowBase {
 				animation.play();
 			});
 
+			setOnMouseClicked(event -> activate());
+
 			// Must be called underneath wrapper's definition.
 			add();
 
-			Color color = new Color(1, 1, 1, 1);
+			Color color = DEFAULT_ITEM_COLOR;
 			setBorderColor(color);
 			setBorderToColor(color);
 
-			DropShadow value = new DropShadow(5, 30, 30, Color.BLACK);
-			setEffect(value);
+			DropShadow value = DEFAULT_ITEM_SHADOW_EFFECT;
+			wrapper.setEffect(value);
 
 		}
 
