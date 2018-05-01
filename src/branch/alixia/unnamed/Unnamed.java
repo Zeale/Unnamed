@@ -9,8 +9,7 @@ import javafx.stage.StageStyle;
 
 public final class Unnamed extends Application {
 
-	public static final Color DEFAULT_WINDOW_COLOR = new Color((double) 0x35 / 255, (double) 0x35 / 255,
-			(double) 0x35 / 255, 1);
+	public static final Color DEFAULT_WINDOW_COLOR = new Color(0.34, 0.34, 0.34, 1);
 
 	public static void main(String[] args) {
 		launch(args);
@@ -21,13 +20,22 @@ public final class Unnamed extends Application {
 		primaryStage.setTitle("Unnamed");
 		primaryStage.initStyle(StageStyle.TRANSPARENT);
 
-		primaryStage.setScene(new Scene(new HomeWindow()));
+		HomeWindow root = new HomeWindow();
+		root.new Item() {
+
+			@Override
+			protected void activate() {
+				System.out.println("Clicked!");
+			}
+		};
+		primaryStage.setScene(new Scene(root));
 		primaryStage.getScene().setFill(Color.TRANSPARENT);
 
 		primaryStage.setWidth(1000);
 		primaryStage.setHeight(600);
 		primaryStage.centerOnScreen();
 		primaryStage.show();
+
 	}
 
 }
