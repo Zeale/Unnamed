@@ -11,7 +11,7 @@ public class UWindowBase extends BorderPane {
 		setTop(menuBar);
 	}
 
-	private static final Color DEFAULT_BACKGROUND_COLOR = new Color(0.37, 0.37, 0.37, 1);
+	private static final Color DEFAULT_BACKGROUND_COLOR = Unnamed.DEFAULT_WINDOW_COLOR;
 	private static final Color DEFAULT_BORDER_COLOR = DEFAULT_BACKGROUND_COLOR.darker().darker();
 
 	{

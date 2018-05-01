@@ -11,6 +11,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Shape;
 
 public class MenuBar extends AnchorPane {
@@ -58,7 +61,9 @@ public class MenuBar extends AnchorPane {
 	}
 
 	{
-		setBackground(FXTools.getBackgroundFromColor(new Color(0, 0, 0, 0.5)));
+
+		setBackground(FXTools.getBackgroundFromColor(new LinearGradient(0.5, 0, 0.5, 1, true, CycleMethod.NO_CYCLE,
+				new Stop(0.3, Color.TRANSPARENT), new Stop(1, Unnamed.DEFAULT_WINDOW_COLOR.darker().darker()))));
 		setPrefHeight(20);
 
 		AnchorPane.setRightAnchor(buttonLayout, 0d);

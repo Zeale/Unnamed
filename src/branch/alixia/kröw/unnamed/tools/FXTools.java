@@ -14,7 +14,7 @@ public final class FXTools {
 	}
 
 	public static Border getBorderFromColor(Paint color) {
-		return getBorderFromColor(color, 2.5);
+		return getBorderFromColor(color, 2);
 	}
 
 	public static Border getBorderFromColor(Paint color, double width) {
