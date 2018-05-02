@@ -2,6 +2,7 @@ package branch.alixia.kröw.unnamed;
 
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.unnamed.UWindowBase;
+import branch.alixia.unnamed.Unnamed;
 import javafx.animation.Transition;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
@@ -30,26 +31,55 @@ public class HomeWindow extends UWindowBase {
 	private static final double DEFAULT_BORDER_WIDTH = 3;
 	private final static String UNNAMED_STRING = new String("Unnamed");
 	private final static DropShadow DEFAULT_ITEM_SHADOW_EFFECT = new DropShadow(5, 30, 30, Color.BLACK);
-	private static final Color DEFAULT_ITEM_COLOR = Color.BLUE;
+	private static final Color DEFAULT_ITEM_COLOR = Unnamed.BASE_COLOR;
 
-	protected final TilePane content = new TilePane();
-	protected final ScrollPane root = new ScrollPane(content);
+	protected final TilePane center = new TilePane();
+
+	protected final VBox right = new VBox(), left = new VBox();
+	// protected final ScrollBox bottom = new ScrollBox();// TODO Define
+
+	protected final ScrollPane centerRoot = new ScrollPane(center), rightRoot = new ScrollPane(),
+			leftRoot = new ScrollPane(), bottomRoot = new ScrollPane();
 
 	{
 
-		root.getStylesheets().add("/branch/alixia/kröw/unnamed/stylesheet.css");
+		String stylesheet = "/branch/alixia/kröw/unnamed/stylesheet.css";
+		centerRoot.getStylesheets().add(stylesheet);
+		rightRoot.getStylesheets().add(stylesheet);
+		leftRoot.getStylesheets().add(stylesheet);
+		bottomRoot.getStylesheets().add(stylesheet);
 
-		content.setPrefColumns(4);
-		root.setBackground(null);
-		content.setBackground(null);
+		center.setPrefColumns(4);
 
-		setCenter(root);
+		rightRoot.setBackground(null);
+		leftRoot.setBackground(null);
+		bottomRoot.setBackground(null);
+		centerRoot.setBackground(null);
+		center.setBackground(null);
 
-		content.setPadding(new Insets(90, 80, 0, 80));
+		setCenter(centerRoot);
+		setLeft(leftRoot);
+		setRight(rightRoot);
+		setBottom(bottomRoot);
+
+		center.setPrefSize(1000, 600);
+		center.setMinSize(400, 400);
+
+		rightRoot.setMinWidth(100);
+		leftRoot.setMinWidth(100);
+		bottomRoot.setMinHeight(100);
+
+		center.setPadding(new Insets(90, 80, 0, 80));
 
 		menuBar.setBorder(
 				new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, null, new BorderWidths(0, 0, 2, 0))));
 		setBorder(FXTools.getBorderFromColor(Color.BLUE, 2));
+		rightRoot.setBorder(new Border(
+				new BorderStroke(DEFAULT_ITEM_COLOR, BorderStrokeStyle.SOLID, null, new BorderWidths(0, 0, 0, 2))));
+		leftRoot.setBorder(new Border(
+				new BorderStroke(DEFAULT_ITEM_COLOR, BorderStrokeStyle.SOLID, null, new BorderWidths(0, 2, 0, 0))));
+		bottomRoot.setBorder(new Border(
+				new BorderStroke(DEFAULT_ITEM_COLOR, BorderStrokeStyle.SOLID, null, new BorderWidths(2, 0, 0, 0))));
 
 	}
 
@@ -150,20 +180,20 @@ public class HomeWindow extends UWindowBase {
 		}
 
 		public void add() {
-			content.getChildren().add(wrapper);
+			center.getChildren().add(wrapper);
 		}
 
 		public void remove() {
-			content.getChildren().remove(wrapper);
+			center.getChildren().remove(wrapper);
 		}
 
 		public final void setPos(int pos) {
-			content.getChildren().remove(wrapper);
-			content.getChildren().add(pos, wrapper);
+			center.getChildren().remove(wrapper);
+			center.getChildren().add(pos, wrapper);
 		}
 
 		public final int getPos() {
-			return content.getChildren().indexOf(wrapper);
+			return center.getChildren().indexOf(wrapper);
 		}
 
 	}

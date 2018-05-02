@@ -10,6 +10,7 @@ import javafx.stage.StageStyle;
 public final class Unnamed extends Application {
 
 	public static final Color DEFAULT_WINDOW_COLOR = new Color(0.34, 0.34, 0.34, 1);
+	public static final Color BASE_COLOR = Color.BLUE;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -21,18 +22,15 @@ public final class Unnamed extends Application {
 		primaryStage.initStyle(StageStyle.TRANSPARENT);
 
 		HomeWindow root = new HomeWindow();
-		root.new Item("Testasdfasdfasdfasdfasdf") {
+		root.new Item("Updates") {
 
 			@Override
 			protected void activate() {
-				System.out.println("Clicked!");
 			}
 		};
 		primaryStage.setScene(new Scene(root));
 		primaryStage.getScene().setFill(Color.TRANSPARENT);
 
-		primaryStage.setWidth(1000);
-		primaryStage.setHeight(600);
 		primaryStage.centerOnScreen();
 		primaryStage.show();
 
