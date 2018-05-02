@@ -12,6 +12,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
@@ -98,6 +100,13 @@ public class HomeWindow extends UWindowBase {
 
 		public Item(String name) {
 			this.name.set(name);
+		}
+
+		public void addImage(Image image) {
+			ImageView view = new ImageView(image);
+			view.fitHeightProperty().bind(heightProperty());
+			view.fitWidthProperty().bind(widthProperty());
+			getChildren().add(view);
 		}
 
 		private final class ItemAnimation extends Transition {
