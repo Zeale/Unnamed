@@ -87,7 +87,8 @@ public class HomeWindow extends UWindowBase {
 
 	}
 
-	private final DoubleProperty minimumItemSize = new SimpleDoubleProperty(140);
+	private final DoubleProperty minimumItemSize = new SimpleDoubleProperty(140),
+			itemSize = new SimpleDoubleProperty(140);
 
 	public abstract class Item extends StackPane {
 
@@ -106,8 +107,8 @@ public class HomeWindow extends UWindowBase {
 
 		public void addImage(Image image) {
 			ImageView view = new ImageView(image);
-			view.fitHeightProperty().bind(heightProperty());
-			view.fitWidthProperty().bind(widthProperty());
+			view.fitHeightProperty().bind(itemSize);
+			view.fitWidthProperty().bind(itemSize);
 			getChildren().add(view);
 		}
 
@@ -212,46 +213,37 @@ public class HomeWindow extends UWindowBase {
 	public final DoubleProperty shadowXProperty() {
 		return this.shadowX;
 	}
-	
 
 	public final double getShadowX() {
 		return this.shadowXProperty().get();
 	}
-	
 
 	public final void setShadowX(final double shadowX) {
 		this.shadowXProperty().set(shadowX);
 	}
-	
 
 	public final DoubleProperty shadowYProperty() {
 		return this.shadowY;
 	}
-	
 
 	public final double getShadowY() {
 		return this.shadowYProperty().get();
 	}
-	
 
 	public final void setShadowY(final double shadowY) {
 		this.shadowYProperty().set(shadowY);
 	}
-	
 
 	public final DoubleProperty minimumItemSizeProperty() {
 		return this.minimumItemSize;
 	}
-	
 
 	public final double getMinimumItemSize() {
 		return this.minimumItemSizeProperty().get();
 	}
-	
 
 	public final void setMinimumItemSize(final double minimumItemSize) {
 		this.minimumItemSizeProperty().set(minimumItemSize);
 	}
-	
 
 }

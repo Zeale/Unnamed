@@ -26,7 +26,7 @@ public final class Unnamed extends Application {
 		root.new Item("Updates") {
 
 			{
-				addImage(new Image("/branch/alixia/kröw/unnamed/resources/graphics/Blue C-16px.png"));
+				addImage(new Image("/branch/alixia/kröw/unnamed/resources/graphics/Blue C-1024px.png"));
 			}
 
 			@Override
