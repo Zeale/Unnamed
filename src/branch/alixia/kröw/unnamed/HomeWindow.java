@@ -32,8 +32,10 @@ public class HomeWindow extends UWindowBase {
 
 	private static final double DEFAULT_BORDER_WIDTH = 3;
 	private final static String UNNAMED_STRING = new String("Unnamed");
-	private final static DropShadow DEFAULT_ITEM_SHADOW_EFFECT = new DropShadow(5, 30, 30, Color.BLACK);
+	private final DropShadow shadowEffect = new DropShadow(5, 30, 30, Color.BLACK);
 	private static final Color DEFAULT_ITEM_COLOR = Unnamed.BASE_COLOR;
+
+	private final DoubleProperty shadowX = shadowEffect.offsetXProperty(), shadowY = shadowEffect.offsetYProperty();
 
 	protected final TilePane center = new TilePane();
 
@@ -85,7 +87,7 @@ public class HomeWindow extends UWindowBase {
 
 	}
 
-	private final DoubleProperty minimumItemSizeProperty = new SimpleDoubleProperty(140);
+	private final DoubleProperty minimumItemSize = new SimpleDoubleProperty(140);
 
 	public abstract class Item extends StackPane {
 
@@ -141,11 +143,11 @@ public class HomeWindow extends UWindowBase {
 
 		{
 
-			minWidthProperty().bind(minimumItemSizeProperty);
-			minHeightProperty().bind(minimumItemSizeProperty);
+			minWidthProperty().bind(minimumItemSize);
+			minHeightProperty().bind(minimumItemSize);
 
-			wrapper.maxWidthProperty().bind(minimumItemSizeProperty);
-			nameText.wrappingWidthProperty().bind(minimumItemSizeProperty);
+			wrapper.maxWidthProperty().bind(minimumItemSize);
+			nameText.wrappingWidthProperty().bind(minimumItemSize);
 
 			wrapper.setAlignment(Pos.CENTER);
 
@@ -172,7 +174,7 @@ public class HomeWindow extends UWindowBase {
 			setBorderColor(color);
 			setBorderToColor(color);
 
-			DropShadow value = DEFAULT_ITEM_SHADOW_EFFECT;
+			DropShadow value = shadowEffect;
 			wrapper.setEffect(value);
 
 		}
@@ -206,5 +208,50 @@ public class HomeWindow extends UWindowBase {
 		}
 
 	}
+
+	public final DoubleProperty shadowXProperty() {
+		return this.shadowX;
+	}
+	
+
+	public final double getShadowX() {
+		return this.shadowXProperty().get();
+	}
+	
+
+	public final void setShadowX(final double shadowX) {
+		this.shadowXProperty().set(shadowX);
+	}
+	
+
+	public final DoubleProperty shadowYProperty() {
+		return this.shadowY;
+	}
+	
+
+	public final double getShadowY() {
+		return this.shadowYProperty().get();
+	}
+	
+
+	public final void setShadowY(final double shadowY) {
+		this.shadowYProperty().set(shadowY);
+	}
+	
+
+	public final DoubleProperty minimumItemSizeProperty() {
+		return this.minimumItemSize;
+	}
+	
+
+	public final double getMinimumItemSize() {
+		return this.minimumItemSizeProperty().get();
+	}
+	
+
+	public final void setMinimumItemSize(final double minimumItemSize) {
+		this.minimumItemSizeProperty().set(minimumItemSize);
+	}
+	
 
 }
