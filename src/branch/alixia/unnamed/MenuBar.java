@@ -4,6 +4,8 @@ import branch.alixia.kröw.unnamed.tools.FXTools;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -20,7 +22,11 @@ public class MenuBar extends AnchorPane {
 
 	protected final HBox buttonLayout = new HBox(2);
 	protected final ObjectProperty<Image> icon = new SimpleObjectProperty<>();
+
+	protected final ToolBar toolbar = new ToolBar();
+
 	private final ImageView iconView = new ImageView();
+	private final HBox leftLayout = new HBox(5, iconView, toolbar);
 
 	public final ObjectProperty<Image> iconProperty() {
 		return this.icon;
@@ -71,10 +77,12 @@ public class MenuBar extends AnchorPane {
 		AnchorPane.setTopAnchor(buttonLayout, 0d);
 
 		iconView.imageProperty().bind(icon);
-		AnchorPane.setLeftAnchor(iconView, 0d);
-		AnchorPane.setTopAnchor(iconView, 0d);
-		AnchorPane.setBottomAnchor(iconView, 0d);
+		AnchorPane.setLeftAnchor(leftLayout, 0d);
+		AnchorPane.setTopAnchor(leftLayout, 0d);
+		AnchorPane.setBottomAnchor(leftLayout, 0d);
 		iconView.fitWidthProperty().bind(iconView.fitHeightProperty());
+		iconView.fitHeightProperty().bind(leftLayout.heightProperty().subtract(4));
+		leftLayout.setAlignment(Pos.CENTER);
 
 	}
 
