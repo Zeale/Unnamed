@@ -1,14 +1,17 @@
 package branch.alixia.unnamed;
 
 import branch.alixia.kröw.unnamed.tools.FXTools;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 
 public class UWindowBase extends BorderPane {
 
-	protected final MenuBar menuBar = new MenuBar();
+	private final ObjectProperty<MenuBar> menuBar = new SimpleObjectProperty<>(new MenuBar());
+
 	{
-		setTop(menuBar);
+		topProperty().bind(menuBar);
 	}
 
 	private static final Color DEFAULT_BACKGROUND_COLOR = Unnamed.DEFAULT_WINDOW_COLOR;
@@ -17,6 +20,18 @@ public class UWindowBase extends BorderPane {
 	{
 		setBackground(FXTools.getBackgroundFromColor(DEFAULT_BACKGROUND_COLOR));
 		setBorder(FXTools.getBorderFromColor(DEFAULT_BORDER_COLOR));
+	}
+
+	protected final ObjectProperty<MenuBar> menuBarProperty() {
+		return this.menuBar;
+	}
+
+	protected final MenuBar getMenuBar() {
+		return this.menuBarProperty().get();
+	}
+
+	protected final void setMenuBar(final MenuBar menuBar) {
+		this.menuBarProperty().set(menuBar);
 	}
 
 }
