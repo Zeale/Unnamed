@@ -19,14 +19,15 @@ public final class Unnamed extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+
 		primaryStage.setTitle("Unnamed");
 		primaryStage.initStyle(StageStyle.TRANSPARENT);
 
 		HomeWindow root = new HomeWindow();
-		root.new Item("Updates") {
+		root.new Item("Constructs") {
 
 			{
-				addImage(new Image("/branch/alixia/kröw/unnamed/resources/graphics/Blue C-1024px.png"));
+				addImage(new Image("/branch/alixia/kröw/unnamed/resources/graphics/Construct Icon-1024px.png"));
 			}
 
 			@Override
@@ -34,6 +35,30 @@ public final class Unnamed extends Application {
 				System.out.println(0);
 			}
 
+		};
+
+		root.new Item("Laws") {
+
+			{
+				addImage(new Image("/branch/alixia/kröw/unnamed/resources/graphics/Law Icon-1024px.png"));
+			}
+
+			@Override
+			protected void activate() {
+
+			}
+		};
+
+		root.new Item("Complexes") {
+
+			{
+				addImage(new Image("/branch/alixia/kröw/unnamed/resources/graphics/Complex Icon-1024px.png"));
+			}
+
+			@Override
+			protected void activate() {
+
+			}
 		};
 
 		primaryStage.setScene(new Scene(root));
