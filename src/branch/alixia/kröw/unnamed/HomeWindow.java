@@ -60,6 +60,8 @@ public class HomeWindow extends UWindowBase {
 		center.setHgap(50);
 		center.setVgap(80);
 
+		center.setEffect(shadowEffect);
+
 		rightRoot.setBackground(null);
 		leftRoot.setBackground(null);
 		bottomRoot.setBackground(null);
@@ -146,6 +148,7 @@ public class HomeWindow extends UWindowBase {
 			protected void interpolate(double frac) {
 				setBorder(new Border(new BorderStroke(fromValue.interpolate(toValue, frac), BorderStrokeStyle.SOLID,
 						new CornerRadii(getWidth() / 10 * frac), new BorderWidths(DEFAULT_BORDER_WIDTH))));
+				nameText.setFill(Color.BLACK.interpolate(DEFAULT_ITEM_COLOR, frac));
 
 			}
 
@@ -170,27 +173,23 @@ public class HomeWindow extends UWindowBase {
 			nameText.setTextAlignment(TextAlignment.CENTER);
 			nameText.textProperty().bind(name);
 
-			setOnMouseEntered(event -> {
+			wrapper.setOnMouseEntered(event -> {
 				animation.setRate(1);
 				animation.play();
 			});
 
-			setOnMouseExited(event -> {
+			wrapper.setOnMouseExited(event -> {
 				animation.setRate(-1);
 				animation.play();
 			});
 
-			setOnMouseClicked(event -> activate());
+			wrapper.setOnMouseClicked(event -> activate());
 
 			// Must be called underneath wrapper's definition.
 			add();
 
-			Color color = DEFAULT_ITEM_COLOR;
-			setBorderColor(color);
-			setBorderToColor(color);
-
-			DropShadow value = shadowEffect;
-			wrapper.setEffect(value);
+			setBorderColor(Color.BLACK);
+			setBorderToColor(Color.BLACK);
 
 		}
 
