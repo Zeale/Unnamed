@@ -83,14 +83,14 @@ public class HomeWindow extends UWindowBase {
 		center.setPadding(new Insets(90, 80, 0, 80));
 
 		menuBar.setBorder(
-				new Border(new BorderStroke(Color.BLUE, BorderStrokeStyle.SOLID, null, new BorderWidths(0, 0, 2, 0))));
-		setBorder(FXTools.getBorderFromColor(Color.BLUE, 2));
-		rightRoot.setBorder(new Border(
-				new BorderStroke(DEFAULT_ITEM_COLOR, BorderStrokeStyle.SOLID, null, new BorderWidths(0, 0, 0, 2))));
-		leftRoot.setBorder(new Border(
-				new BorderStroke(DEFAULT_ITEM_COLOR, BorderStrokeStyle.SOLID, null, new BorderWidths(0, 2, 0, 0))));
-		bottomRoot.setBorder(new Border(
-				new BorderStroke(DEFAULT_ITEM_COLOR, BorderStrokeStyle.SOLID, null, new BorderWidths(2, 0, 0, 0))));
+				new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(0, 0, 2, 0))));
+		setBorder(FXTools.getBorderFromColor(Color.BLACK, 2));
+		rightRoot.setBorder(
+				new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(0, 0, 0, 2))));
+		leftRoot.setBorder(
+				new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(0, 2, 0, 0))));
+		bottomRoot.setBorder(
+				new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(2, 0, 0, 0))));
 
 	}
 
