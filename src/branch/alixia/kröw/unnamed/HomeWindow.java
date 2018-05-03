@@ -4,13 +4,17 @@ import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.unnamed.UWindowBase;
 import branch.alixia.unnamed.Unnamed;
 import javafx.animation.Transition;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -32,7 +36,7 @@ public class HomeWindow extends UWindowBase {
 
 	private static final double DEFAULT_BORDER_WIDTH = 3;
 	private final static String UNNAMED_STRING = new String("Unnamed");
-	private final DropShadow shadowEffect = new DropShadow(5, 30, 30, Color.BLACK);
+	private final DropShadow shadowEffect = new DropShadow(5, 80, 180, new Color(0.1, 0.1, 0.1, 1));
 	private static final Color DEFAULT_ITEM_COLOR = Unnamed.BASE_COLOR;
 
 	private final DoubleProperty shadowX = shadowEffect.offsetXProperty(), shadowY = shadowEffect.offsetYProperty();
@@ -42,8 +46,8 @@ public class HomeWindow extends UWindowBase {
 	protected final VBox right = new VBox(), left = new VBox();
 	// protected final ScrollBox bottom = new ScrollBox();// TODO Define
 
-	protected final ScrollPane centerRoot = new ScrollPane(center), rightRoot = new ScrollPane(),
-			leftRoot = new ScrollPane(), bottomRoot = new ScrollPane();
+	protected final ScrollPane centerRoot = new ScrollPane(center), rightRoot = new ScrollPane(right),
+			leftRoot = new ScrollPane(left), bottomRoot = new ScrollPane();
 
 	{
 
@@ -53,7 +57,8 @@ public class HomeWindow extends UWindowBase {
 		leftRoot.getStylesheets().add(stylesheet);
 		bottomRoot.getStylesheets().add(stylesheet);
 
-		center.setPrefColumns(4);
+		center.setHgap(50);
+		center.setVgap(80);
 
 		rightRoot.setBackground(null);
 		leftRoot.setBackground(null);
@@ -66,7 +71,9 @@ public class HomeWindow extends UWindowBase {
 		setRight(rightRoot);
 		setBottom(bottomRoot);
 
-		center.setPrefSize(1000, 600);
+		center.setPrefWidth(1000);
+		centerRoot.setPrefViewportHeight(600);
+		centerRoot.setHbarPolicy(ScrollBarPolicy.NEVER);
 		center.setMinSize(400, 400);
 
 		rightRoot.setMinWidth(100);
@@ -87,8 +94,7 @@ public class HomeWindow extends UWindowBase {
 
 	}
 
-	private final DoubleProperty minimumItemSize = new SimpleDoubleProperty(140),
-			itemSize = new SimpleDoubleProperty(140);
+	private final DoubleProperty itemSize = new SimpleDoubleProperty(140);
 
 	public abstract class Item extends StackPane {
 
@@ -96,6 +102,14 @@ public class HomeWindow extends UWindowBase {
 		// it? Or just an equal String? Probably the former, but whatever. This works
 		// too.
 		private final ObjectProperty<String> name = new SimpleObjectProperty<>(UNNAMED_STRING);
+		private final Text defaultTextIcon = new Text(name.get().substring(0, 1).toUpperCase());
+		private final StringProperty defaultTextIconFontFamily = new SimpleStringProperty("Brush Script MT");
+		{
+			defaultTextIcon.textProperty()
+					.bind(Bindings.createStringBinding(() -> name.get().substring(0, 1).toUpperCase(), name));
+			defaultTextIcon.fontProperty().bind(Bindings
+					.createObjectBinding(() -> Font.font(defaultTextIconFontFamily.get(), itemSize.get()), itemSize));
+		}
 
 		public Item() {
 			this(UNNAMED_STRING);
@@ -144,11 +158,11 @@ public class HomeWindow extends UWindowBase {
 
 		{
 
-			minWidthProperty().bind(minimumItemSize);
-			minHeightProperty().bind(minimumItemSize);
+			prefWidthProperty().bind(itemSize);
+			prefHeightProperty().bind(itemSize);
 
-			wrapper.maxWidthProperty().bind(minimumItemSize);
-			nameText.wrappingWidthProperty().bind(minimumItemSize);
+			wrapper.maxWidthProperty().bind(itemSize);
+			nameText.wrappingWidthProperty().bind(itemSize);
 
 			wrapper.setAlignment(Pos.CENTER);
 
@@ -232,18 +246,6 @@ public class HomeWindow extends UWindowBase {
 
 	public final void setShadowY(final double shadowY) {
 		this.shadowYProperty().set(shadowY);
-	}
-
-	public final DoubleProperty minimumItemSizeProperty() {
-		return this.minimumItemSize;
-	}
-
-	public final double getMinimumItemSize() {
-		return this.minimumItemSizeProperty().get();
-	}
-
-	public final void setMinimumItemSize(final double minimumItemSize) {
-		this.minimumItemSizeProperty().set(minimumItemSize);
 	}
 
 }

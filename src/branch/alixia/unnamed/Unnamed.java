@@ -31,11 +31,7 @@ public final class Unnamed extends Application {
 
 			@Override
 			protected void activate() {
-
-				double distance = Math.random() * 150 + 50;
-				root.setShadowX(distance);
-				root.setShadowY(distance);
-
+				System.out.println(0);
 			}
 
 		};
