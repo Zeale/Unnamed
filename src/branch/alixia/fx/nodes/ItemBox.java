@@ -1,5 +1,6 @@
 package branch.alixia.fx.nodes;
 
+import branch.alixia.Images;
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.unnamed.Unnamed;
 import javafx.animation.Transition;
@@ -14,7 +15,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
@@ -61,11 +61,14 @@ public class ItemBox extends ScrollPane {
 			this.name.set(name);
 		}
 
-		public void addImage(Image image) {
-			ImageView view = new ImageView(image);
+		public void bindSize(ImageView view) {
 			view.fitHeightProperty().bind(itemSize);
 			view.fitWidthProperty().bind(itemSize);
-			getChildren().add(view);
+		}
+
+		public void unbindSize(ImageView view) {
+			view.fitHeightProperty().unbind();
+			view.fitWidthProperty().unbind();
 		}
 
 		private final class ItemAnimation extends Transition {
@@ -182,6 +185,34 @@ public class ItemBox extends ScrollPane {
 
 		public final void setShadowY(final double shadowY) {
 			this.shadowYProperty().set(shadowY);
+		}
+
+		/**
+		 * Convenience method for adding an {@link ImageView} to this {@link Item} which
+		 * has an image that is loaded using the {@link Images} class. The
+		 * {@link Images} class allows an image to be loaded in the background while a
+		 * small-sized "missing texture" image is shown in its place. This way, the user
+		 * doesn't get lag while the window is loading (since the image is loaded on a
+		 * different thread), and they still see an image (the missing texture image)
+		 * while waiting for the actual image to load.
+		 * 
+		 * @param absolutePath
+		 *            The absolute path of the image.
+		 * @return The {@link ImageView} that was added to this {@link Item}.
+		 * @see Images
+		 */
+		public final ImageView addImage(String absolutePath) {
+
+			ImageView view = new ImageView();
+
+			Images.loadImageInBackground(view, absolutePath);
+
+			view.fitWidthProperty().bind(itemSize);
+			view.fitHeightProperty().bind(itemSize);
+
+			getChildren().add(view);
+
+			return view;
 		}
 
 	}

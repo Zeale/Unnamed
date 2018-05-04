@@ -1,15 +1,15 @@
 package branch.alixia.unnamed;
 
+import branch.alixia.Images;
 import branch.alixia.guis.HomeWindowBase;
 import branch.alixia.guis.MSGUIs;
-import javafx.scene.image.Image;
 
 final class HomeWindow extends HomeWindowBase {
 	{
 		new Item("Constructs") {
 
 			{
-				addImage(new Image("/branch/alixia/kröw/unnamed/resources/graphics/Construct Icon-1024px.png"));
+				addImage(Images.GRAPHICS_LOCATION + "Construct Icon-1024px.png");
 			}
 
 			@Override
@@ -22,7 +22,7 @@ final class HomeWindow extends HomeWindowBase {
 		new Item("Laws") {
 
 			{
-				addImage(new Image("/branch/alixia/kröw/unnamed/resources/graphics/Law Icon-1024px.png"));
+				addImage(Images.GRAPHICS_LOCATION + "Law Icon-1024px.png");
 			}
 
 			@Override
@@ -34,7 +34,7 @@ final class HomeWindow extends HomeWindowBase {
 		new Item("Complexes") {
 
 			{
-				addImage(new Image("/branch/alixia/kröw/unnamed/resources/graphics/Complex Icon-1024px.png"));
+				addImage(Images.GRAPHICS_LOCATION + "Complex Icon-1024px.png");
 			}
 
 			@Override
