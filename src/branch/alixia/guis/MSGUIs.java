@@ -1,9 +1,7 @@
 package branch.alixia.guis;
 
 import branch.alixia.kröw.unnamed.guis.ConstructWindowImpl;
-import javafx.scene.Scene;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
+import javafx.scene.Parent;
 
 public final class MSGUIs {
 
@@ -11,8 +9,8 @@ public final class MSGUIs {
 
 	}
 
-	public static void openConstructWindow(Stage stage) {
-		stage.setScene(new Scene(new ConstructWindowImpl(), Color.TRANSPARENT));
+	public static Parent openConstructWindow() {
+		return new ConstructWindowImpl();
 	}
 
 }

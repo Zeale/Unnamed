@@ -1,6 +1,7 @@
 package branch.alixia.unnamed;
 
 import branch.alixia.guis.HomeWindowBase;
+import branch.alixia.guis.MSGUIs;
 import javafx.scene.image.Image;
 
 final class HomeWindow extends HomeWindowBase {
@@ -13,7 +14,7 @@ final class HomeWindow extends HomeWindowBase {
 
 			@Override
 			protected void activate() {
-				System.out.println(0);
+				getScene().setRoot(MSGUIs.openConstructWindow());
 			}
 
 		};
