@@ -9,6 +9,9 @@ import javafx.scene.layout.BorderWidths;
 import javafx.scene.paint.Paint;
 
 public final class FXTools {
+
+	public static final double COMMON_BORDER_WIDTH = 2;
+
 	public static Background getBackgroundFromColor(Paint color) {
 		return new Background(new BackgroundFill(color, null, null));
 	}
