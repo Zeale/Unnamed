@@ -1,12 +1,16 @@
 package branch.alixia.msapi;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Date;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class Construct {
+public class Construct implements Externalizable {
 
 	/**
 	 * SUID
@@ -19,6 +23,25 @@ public class Construct {
 	private transient final SimpleObjectProperty<Date> birthDate = new SimpleObjectProperty<>();
 
 	public Construct() {
+	}
+
+	@Override
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeLong(CLASS_VERSION);
+
+		out.writeUTF(name.getValueSafe());
+		out.writeUTF(description.getValueSafe());
+		out.writeObject(birthDate.get());
+	}
+
+	@Override
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		if (in.readLong() != CLASS_VERSION)
+			throw new IOException("Incompatible Construct Version");
+
+		name.set(in.readUTF());
+		description.set(in.readUTF());
+		birthDate.set((Date) in.readObject());
 	}
 
 	public final StringProperty nameProperty() {
