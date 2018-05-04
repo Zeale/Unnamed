@@ -1,7 +1,7 @@
-package branch.alixia.kröw.unnamed;
+package branch.alixia.guis;
 
+import branch.alixia.kröw.unnamed.DefaultMenuBar;
 import branch.alixia.kröw.unnamed.tools.FXTools;
-import branch.alixia.unnamed.UWindowBase;
 import branch.alixia.unnamed.Unnamed;
 import javafx.animation.Transition;
 import javafx.beans.binding.Bindings;
@@ -32,7 +32,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
-public class HomeWindow extends UWindowBase {
+public class HomeWindowBase extends UWindowBase {
 
 	private static final double DEFAULT_BORDER_WIDTH = 3;
 	private final static String UNNAMED_STRING = new String("Unnamed");

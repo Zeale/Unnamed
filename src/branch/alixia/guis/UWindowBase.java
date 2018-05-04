@@ -1,6 +1,8 @@
-package branch.alixia.unnamed;
+package branch.alixia.guis;
 
 import branch.alixia.kröw.unnamed.tools.FXTools;
+import branch.alixia.unnamed.MenuBar;
+import branch.alixia.unnamed.Unnamed;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.BorderPane;
