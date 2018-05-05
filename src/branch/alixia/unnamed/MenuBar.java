@@ -5,7 +5,6 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -23,10 +22,12 @@ public class MenuBar extends AnchorPane {
 	protected final HBox buttonLayout = new HBox(2);
 	protected final ObjectProperty<Image> icon = new SimpleObjectProperty<>();
 
-	protected final ToolBar toolbar = new ToolBar();
-
 	private final ImageView iconView = new ImageView();
-	private final HBox leftLayout = new HBox(5, iconView, toolbar);
+	private final HBox leftLayout = new HBox(5, iconView);
+
+	{
+		getChildren().addAll(leftLayout, buttonLayout);
+	}
 
 	public final ObjectProperty<Image> iconProperty() {
 		return this.icon;
@@ -44,6 +45,10 @@ public class MenuBar extends AnchorPane {
 
 		private final StackPane button = new StackPane();
 
+		{
+			add();
+		}
+
 		public void add() {
 			buttonLayout.getChildren().add(button);
 		}
@@ -52,12 +57,22 @@ public class MenuBar extends AnchorPane {
 			buttonLayout.getChildren().remove(button);
 		}
 
+		public MenuItem(Shape... shapes) {
+			for (Shape s : shapes)
+				addShape(s);
+		}
+
+		public MenuItem() {
+		}
+
 		public void addShape(Shape shape) {
 			shape.setMouseTransparent(true);
+			button.getChildren().add(shape);
 		}
 
 		public void removeShape(Shape shape) {
 			shape.setMouseTransparent(false);
+			button.getChildren().remove(shape);
 		}
 
 		public final void setOnMouseClicked(EventHandler<? super MouseEvent> value) {
