@@ -10,23 +10,22 @@
 	-fx-background-color: rgba(0.0, 0.0, 0.0, 0.5);
 }
 
-.scroll-pane .scroll-bar:vertical .increment-button .increment-arrow, .scroll-pane .scroll-bar:vertical .decrement-button .decrement-arrow {
+.scroll-pane .scroll-bar .increment-button .increment-arrow, .scroll-pane .scroll-bar:vertical .decrement-button .decrement-arrow {
 	-fx-background-color: black;
 }
 
-.scroll-pane .scroll-bar:vertical .track {
+.scroll-pane .scroll-bar .track {
 	-fx-background-color: rgba(0.0, 0.0, 0.0, 0.8);
 }
 
-.scroll-pane .scroll-bar:vertical .thumb {
+.scroll-pane .scroll-bar .thumb {
 	-fx-background-color: rgba(125.0, 125.0, 125.0, 0.45);
 }
 
-  .scroll-pane .scroll-bar:vertical,  .scroll-pane .scroll-bar:vertical corner {
+  .scroll-pane .scroll-bar,  .scroll-pane .scroll-bar:vertical corner {
 	-fx-background-color: rgba(40.0, 40.0, 40.0, 0.73);
 }
 
-.scroll-pane .scroll-bar:vertical .increment-button, .scroll-pane .scroll-bar:vertical .decrement-button {
+.scroll-pane .scroll-bar .increment-button, .scroll-pane .scroll-bar:vertical .decrement-button {
 	-fx-background-color: transparent;
 }
-

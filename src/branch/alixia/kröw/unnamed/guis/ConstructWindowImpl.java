@@ -6,11 +6,11 @@ import java.util.Date;
 import branch.alixia.guis.UWindowBase;
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.msapi.Construct;
+import branch.alixia.unnamed.MenuBar;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableCell;
@@ -24,6 +24,9 @@ import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 
 public class ConstructWindowImpl extends UWindowBase {
 
@@ -35,7 +38,10 @@ public class ConstructWindowImpl extends UWindowBase {
 	private @FXML TableColumn<Construct, Date> birthday = null;
 
 	private final ScrollPane centerWrapper = new ScrollPane();
-	private final VBox right = new VBox(15);
+
+	private final MenuBar rightToolBar = new MenuBar();
+	private final AnchorPane menu = new AnchorPane();
+	private final VBox rightWrapper = new VBox(0, rightToolBar, menu);
 
 	{
 		/*
@@ -77,9 +83,10 @@ public class ConstructWindowImpl extends UWindowBase {
 		centerWrapper.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null,
 				new BorderWidths(0, COMMON_BORDER_WIDTH, 0, 0))));
 
-		setRight(right);
-		right.setMinWidth(150);
-		right.setMaxWidth(450);
+		setRight(rightWrapper);
+		rightWrapper.setMinWidth(150);
+		rightWrapper.setPrefWidth(300);
+		rightWrapper.setMaxWidth(450);
 
 		/*
 		 * Init
@@ -119,19 +126,24 @@ public class ConstructWindowImpl extends UWindowBase {
 		 * (Testing Code)
 		 */
 
-		Button e = new Button("Add");
-		e.setOnAction(event -> CONSTRUCT_LIST.add(new Construct("Kröw", "This is a construct!", new Date())));
-		right.getChildren().add(e);
+		Button newButton = new Button("New");
+		newButton.setOnAction(event -> showNewMenu());
 
-		e = new Button("Remove");
-		e.setOnAction(event -> {
-			if (!CONSTRUCT_LIST.isEmpty())
-				CONSTRUCT_LIST.remove(CONSTRUCT_LIST.size() - 1);
-		});
+		rightToolBar.new MenuItem(getFormattedMenuText("View"));
+		rightToolBar.new MenuItem(getFormattedMenuText("New"));
+		rightToolBar.setPrefHeight(30);
 
-		right.getChildren().add(e);
-		right.setAlignment(Pos.CENTER);
+	}
 
+	private static Text getFormattedMenuText(String text) {
+		Text t = new Text(text);
+		t.setFont(Font.font(null, FontWeight.BOLD, -1));
+		t.setFill(Color.WHITE);
+		return t;
+	}
+
+	private void showNewMenu() {
+		// TODO Implement
 	}
 
 	private class ConstructCell<T> extends TableCell<Construct, T> {
