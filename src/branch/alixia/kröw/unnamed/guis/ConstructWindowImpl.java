@@ -132,13 +132,15 @@ public class ConstructWindowImpl extends UWindowBase {
 		rightToolBar.new MenuItem(getFormattedMenuText("View"));
 		rightToolBar.new MenuItem(getFormattedMenuText("New"));
 		rightToolBar.setPrefHeight(30);
+		rightToolBar.setRightMenuPadding(15);
+		rightToolBar.setRightMenuSpacing(10);
 
 	}
 
 	private static Text getFormattedMenuText(String text) {
 		Text t = new Text(text);
 		t.setFont(Font.font(null, FontWeight.BOLD, -1));
-		t.setFill(Color.WHITE);
+		t.setFill(Color.BLUE);
 		return t;
 	}
 
