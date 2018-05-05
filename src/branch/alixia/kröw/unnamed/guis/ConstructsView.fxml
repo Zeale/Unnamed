@@ -8,7 +8,7 @@
 <TableView fx:id="constructs" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <columns>
     <TableColumn fx:id="name" prefWidth="100.0" resizable="false" sortable="false" text="Name" />
-      <TableColumn fx:id="description" prefWidth="412.0" resizable="false" sortable="false" text="Description" />
-    <TableColumn fx:id="birthday" prefWidth="87.0" resizable="false" sortable="false" text="Birthday" />
+      <TableColumn fx:id="description" prefWidth="537.0" resizable="false" sortable="false" text="Description" />
+    <TableColumn fx:id="birthday" minWidth="0.0" prefWidth="423.0" resizable="false" sortable="false" text="Birthday" />
   </columns>
 </TableView>

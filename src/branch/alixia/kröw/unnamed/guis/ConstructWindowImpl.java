@@ -10,8 +10,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Border;
@@ -71,7 +75,7 @@ public class ConstructWindowImpl extends UWindowBase {
 		centerWrapper.setFitToWidth(true);
 		centerWrapper.setBackground(null);
 		centerWrapper.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null,
-				new BorderWidths(0, FXTools.COMMON_BORDER_WIDTH, 0, 0))));
+				new BorderWidths(0, COMMON_BORDER_WIDTH, 0, 0))));
 
 		setRight(right);
 		right.setMinWidth(150);
@@ -83,6 +87,88 @@ public class ConstructWindowImpl extends UWindowBase {
 
 		constructs.setItems(CONSTRUCT_LIST);
 
+		/*
+		 * Cell Value Factories
+		 */
+		name.setCellValueFactory(param -> param.getValue().nameProperty());
+		description.setCellValueFactory(param -> param.getValue().descriptionProperty());
+		birthday.setCellValueFactory(param -> param.getValue().birthDateProperty());
+
+		/*
+		 * Cell Factories
+		 */
+		name.setCellFactory(param -> new StringCell());
+		description.setCellFactory(param -> new StringCell());
+		birthday.setCellFactory(param -> new ConstructCell<Date>() {
+			protected void updateItem(Date item, boolean empty) {
+				super.updateItem(item, empty);
+				if (item != null)
+					setText(item.toString());
+			};
+		});
+
+		constructs.setRowFactory(param -> new ConstructRow());
+
+		constructs.setBackground(null);
+		constructs.setBorder(
+				new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(0, 0, 0, 3))));
+
+		/*
+		 * Functional Buttons (Right Box)
+		 * 
+		 * (Testing Code)
+		 */
+
+		Button e = new Button("Add");
+		e.setOnAction(event -> CONSTRUCT_LIST.add(new Construct("Kröw", "This is a construct!", new Date())));
+		right.getChildren().add(e);
+
+		e = new Button("Remove");
+		e.setOnAction(event -> {
+			if (!CONSTRUCT_LIST.isEmpty())
+				CONSTRUCT_LIST.remove(CONSTRUCT_LIST.size() - 1);
+		});
+
+		right.getChildren().add(e);
+		right.setAlignment(Pos.CENTER);
+
+	}
+
+	private class ConstructCell<T> extends TableCell<Construct, T> {
+
+		{
+			setTextFill(Color.WHITE);
+		}
+
+		@Override
+		protected void updateItem(T item, boolean empty) {
+			super.updateItem(item, empty);
+
+			if (item == null || empty)
+				setText(null);
+
+		}
+	}
+
+	private class ConstructRow extends TableRow<Construct> {
+
+		@Override
+		protected void updateItem(Construct item, boolean empty) {
+			super.updateItem(item, empty);
+
+			setBackground(FXTools.getBackgroundFromColor(
+					item == null || empty ? ((getIndex() & 1) == 0 ? Color.BLACK.interpolate(Color.TRANSPARENT, 0.865)
+							: Color.BLACK.interpolate(Color.TRANSPARENT, 0.7)) : Color.GRAY));
+
+		}
+	}
+
+	private class StringCell extends ConstructCell<String> {
+		@Override
+		protected void updateItem(String item, boolean empty) {
+			super.updateItem(item, empty);
+			setText(item);
+		}
 	}
 
 }
