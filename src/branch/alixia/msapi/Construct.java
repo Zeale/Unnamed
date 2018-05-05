@@ -25,6 +25,12 @@ public class Construct implements Externalizable {
 	public Construct() {
 	}
 
+	public Construct(String name, String description, Date birthday) {
+		setName(name);
+		setDescription(description);
+		setBirthDate(birthday);
+	}
+
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
 		out.writeLong(CLASS_VERSION);
