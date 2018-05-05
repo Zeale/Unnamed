@@ -1,8 +1,11 @@
 package branch.alixia.unnamed;
 
 import branch.alixia.kröw.unnamed.tools.FXTools;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
@@ -24,6 +27,9 @@ public class MenuBar extends AnchorPane {
 
 	private final ImageView iconView = new ImageView();
 	private final HBox leftLayout = new HBox(5, iconView);
+
+	private final DoubleProperty rightMenuPadding = new SimpleDoubleProperty(10),
+			rightMenuSpacing = new SimpleDoubleProperty(5);
 
 	{
 		getChildren().addAll(leftLayout, buttonLayout);
@@ -90,6 +96,9 @@ public class MenuBar extends AnchorPane {
 		AnchorPane.setRightAnchor(buttonLayout, 0d);
 		AnchorPane.setBottomAnchor(buttonLayout, 0d);
 		AnchorPane.setTopAnchor(buttonLayout, 0d);
+		buttonLayout.spacingProperty().bind(rightMenuSpacing);
+		rightMenuPadding.addListener((ChangeListener<Number>) (observable, oldValue, newValue) -> AnchorPane
+				.setRightAnchor(buttonLayout, newValue.doubleValue()));
 
 		iconView.imageProperty().bind(icon);
 		AnchorPane.setLeftAnchor(leftLayout, 0d);
@@ -99,6 +108,30 @@ public class MenuBar extends AnchorPane {
 		iconView.fitHeightProperty().bind(leftLayout.heightProperty().subtract(4));
 		leftLayout.setAlignment(Pos.CENTER);
 
+	}
+
+	public final DoubleProperty rightMenuPaddingProperty() {
+		return this.rightMenuPadding;
+	}
+
+	public final double getRightMenuPadding() {
+		return this.rightMenuPaddingProperty().get();
+	}
+
+	public final void setRightMenuPadding(final double rightMenuPadding) {
+		this.rightMenuPaddingProperty().set(rightMenuPadding);
+	}
+
+	public final DoubleProperty rightMenuSpacingProperty() {
+		return this.rightMenuSpacing;
+	}
+
+	public final double getRightMenuSpacing() {
+		return this.rightMenuSpacingProperty().get();
+	}
+
+	public final void setRightMenuSpacing(final double rightMenuSpacing) {
+		this.rightMenuSpacingProperty().set(rightMenuSpacing);
 	}
 
 }
