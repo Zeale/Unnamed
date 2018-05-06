@@ -14,6 +14,7 @@ public final class Unnamed extends Application {
 	public static final Color BASE_COLOR = Color.BLUE;
 
 	public static final File PROGRAM_ROOT = new File(System.getProperty("user.home"), "Unnamed");
+
 	static {
 		if (!PROGRAM_ROOT.isDirectory()) {
 			PROGRAM_ROOT.delete();
@@ -64,6 +65,14 @@ public final class Unnamed extends Application {
 		stage.setScene(new Scene(root, Color.TRANSPARENT));
 		stage.centerOnScreen();
 		stage.show();
+	}
+
+	public static void setScene(Scene scene) {
+		stage.setScene(scene);
+	}
+	
+	static Stage getStage() {
+		return stage;
 	}
 
 }

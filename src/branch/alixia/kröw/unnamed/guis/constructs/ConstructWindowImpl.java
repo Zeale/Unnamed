@@ -27,9 +27,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 public class ConstructWindowImpl extends UWindowBase {
+
+	private final Stage stage;
+
+	public ConstructWindowImpl(Stage stage) {
+		this.stage = stage;
+	}
 
 	private final static ObservableList<Construct> CONSTRUCT_LIST = FXCollections
 			.synchronizedObservableList(FXCollections.observableArrayList());
@@ -74,7 +82,7 @@ public class ConstructWindowImpl extends UWindowBase {
 		 * Layout
 		 */
 
-		getStylesheets().addAll("/branch/alixia/kröw/unnamed/guis/ConstructWindowImpl.css",
+		getStylesheets().addAll("/branch/alixia/kröw/unnamed/guis/constructs/ConstructWindowImpl.css",
 				"/branch/alixia/kröw/unnamed/stylesheet.css");
 
 		setCenter(centerWrapper);
@@ -148,7 +156,14 @@ public class ConstructWindowImpl extends UWindowBase {
 	}
 
 	private void showNewMenu() {
-		// TODO Implement
+		Stage stage;
+		if (this.stage == null) {
+			stage = new Stage(StageStyle.TRANSPARENT);
+			stage.initOwner(getScene().getWindow());
+		} else
+			stage = this.stage;
+		stage.setAlwaysOnTop(true);
+		stage.show();
 	}
 
 	private class ConstructCell<T> extends TableCell<Construct, T> {

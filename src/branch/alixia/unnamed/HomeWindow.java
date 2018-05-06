@@ -2,7 +2,6 @@ package branch.alixia.unnamed;
 
 import branch.alixia.Images;
 import branch.alixia.guis.HomeWindowBase;
-import branch.alixia.guis.MSGUIs;
 
 final class HomeWindow extends HomeWindowBase {
 	{
