@@ -1,6 +1,6 @@
 package branch.alixia.guis;
 
-import branch.alixia.kröw.unnamed.guis.ConstructWindowImpl;
+import branch.alixia.kröw.unnamed.guis.constructs.ConstructWindowImpl;
 import branch.alixia.unnamed.Unnamed;
 import javafx.scene.Parent;
 

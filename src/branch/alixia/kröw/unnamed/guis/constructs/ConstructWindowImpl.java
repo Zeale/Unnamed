@@ -1,4 +1,4 @@
-package branch.alixia.kröw.unnamed.guis;
+package branch.alixia.kröw.unnamed.guis.constructs;
 
 import java.io.IOException;
 import java.util.Date;
@@ -7,14 +7,10 @@ import branch.alixia.guis.UWindowBase;
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.msapi.Construct;
 import branch.alixia.unnamed.MenuBar;
-import javafx.animation.FillTransition;
-import javafx.animation.SequentialTransition;
-import javafx.animation.Transition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableCell;
@@ -146,29 +142,10 @@ public class ConstructWindowImpl extends UWindowBase {
 		Text t = new Text(text);
 		t.setFont(Font.font(null, FontWeight.BOLD, -1));
 
-		applyColorwheelTransition(t, Duration.seconds(0.5), Color.RED, Color.GOLD, Color.GREEN, Color.BLUE);
+		FXTools.applyColorwheelTransition(t, Duration.seconds(0.5), Color.RED, Color.GOLD, Color.GREEN, Color.BLUE);
 
 		return t;
 	}
-
-	private static void applyColorwheelTransition(Text t, Duration duration, Color... colors) {
-		t.setFill(colors[0]);
-		FillTransition[] transitions = new FillTransition[colors.length];
-		for (int i = 0; i < colors.length - 1;)
-			transitions[i] = new FillTransition(duration, t, colors[i], colors[++i]);
-
-		transitions[transitions.length - 1] = new FillTransition(duration, t, colors[colors.length - 1], colors[0]);
-
-		SequentialTransition repeater = new SequentialTransition(transitions);
-
-		repeater.setCycleCount(Transition.INDEFINITE);
-
-		t.setOnMouseEntered(event -> repeater.play());
-		t.setOnMouseExited(event -> repeater.pause());
-
-	}
-
-	private final Group viewGroup = new Group(), newGroup = new Group();
 
 	private void showNewMenu() {
 		// TODO Implement

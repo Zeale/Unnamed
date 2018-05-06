@@ -1,4 +1,4 @@
-package branch.alixia.kröw.unnamed.guis;
+package branch.alixia.kröw.unnamed.guis.constructs;
 
 import javafx.scene.control.TableCell;
 import javafx.util.Callback;
