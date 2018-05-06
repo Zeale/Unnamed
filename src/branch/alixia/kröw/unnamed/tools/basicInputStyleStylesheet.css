@@ -1,0 +1,13 @@
+.basic-input .scroll-pane, .basic-input .scroll-pane .content, .basic-input .scroll-pane .viewport {
+	-fx-background-color: transparent;
+}
+
+.basic-input {
+	-fx-font-family: Consolas;
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+}
+
+.basic-input.text-field {
+	-fx-font-weight: normal;
+}

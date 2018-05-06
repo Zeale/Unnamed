@@ -1,5 +1,11 @@
 package branch.alixia.kröw.unnamed.tools;
 
+import static javafx.scene.paint.Color.BLUE;
+import static javafx.scene.paint.Color.GOLD;
+import static javafx.scene.paint.Color.GREEN;
+import static javafx.scene.paint.Color.RED;
+
+import branch.alixia.unnamed.Unnamed;
 import javafx.animation.FillTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.Transition;
@@ -9,6 +15,7 @@ import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
@@ -35,14 +42,35 @@ public final class FXTools {
 		FillTransition[] transitions = new FillTransition[colors.length];
 		for (int i = 0; i < colors.length - 1;)
 			transitions[i] = new FillTransition(duration, shape, colors[i], colors[++i]);
-	
+
 		transitions[transitions.length - 1] = new FillTransition(duration, shape, colors[colors.length - 1], colors[0]);
-	
+
 		SequentialTransition repeater = new SequentialTransition(transitions);
-	
+
 		repeater.setCycleCount(Transition.INDEFINITE);
-	
+
 		shape.setOnMouseEntered(event -> repeater.play());
 		shape.setOnMouseExited(event -> repeater.pause());
 	}
+
+	private static final Color[] DEFAULT_COLORWHEEL_TRANSITION_COLORS = new Color[] { RED, GOLD, GREEN, BLUE };
+	private static final Duration DEFAULT_COLORWHEEL_TRANSITION_DURATION = Duration.seconds(0.5);
+
+	public static void applyColorwheelTransition(Shape shape, Color... colors) {
+		applyColorwheelTransition(shape, DEFAULT_COLORWHEEL_TRANSITION_DURATION, colors);
+	}
+
+	public static void applyColorwheelTransition(Shape shape) {
+		applyColorwheelTransition(shape, DEFAULT_COLORWHEEL_TRANSITION_DURATION, DEFAULT_COLORWHEEL_TRANSITION_COLORS);
+	}
+
+	public static void styleBasicInput(Region... inputs) {
+		for (Region r : inputs) {
+			r.setBackground(getBackgroundFromColor(Unnamed.DEFAULT_WINDOW_COLOR.interpolate(Color.BLACK, 0.25)));
+			r.setBorder(getBorderFromColor(Unnamed.ITEM_BORDER_COLOR));
+			r.getStylesheets().add("branch/alixia/kröw/unnamed/tools/basicInputStyleStylesheet.css");
+			r.getStyleClass().add("basic-input");
+		}
+	}
+
 }

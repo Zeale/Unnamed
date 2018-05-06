@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -29,18 +30,22 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Duration;
 
 public class ConstructWindowImpl extends UWindowBase {
 
-	private final Stage stage;
-
-	public ConstructWindowImpl(Stage stage) {
-		this.stage = stage;
+	public ConstructWindowImpl() {
 	}
 
 	private final static ObservableList<Construct> CONSTRUCT_LIST = FXCollections
 			.synchronizedObservableList(FXCollections.observableArrayList());
+
+	public void addConstruct(Construct construct) {
+		CONSTRUCT_LIST.add(construct);
+	}
+
+	public void removeConstruct(Construct construct) {
+		CONSTRUCT_LIST.remove(construct);
+	}
 
 	private @FXML TableView<Construct> constructs = null;
 	private @FXML TableColumn<Construct, String> name = null, description = null;
@@ -150,20 +155,21 @@ public class ConstructWindowImpl extends UWindowBase {
 		Text t = new Text(text);
 		t.setFont(Font.font(null, FontWeight.BOLD, -1));
 
-		FXTools.applyColorwheelTransition(t, Duration.seconds(0.5), Color.RED, Color.GOLD, Color.GREEN, Color.BLUE);
+		FXTools.applyColorwheelTransition(t);
 
 		return t;
 	}
 
+	private Stage newWindow;
+
 	private void showNewMenu() {
-		Stage stage;
-		if (this.stage == null) {
-			stage = new Stage(StageStyle.TRANSPARENT);
-			stage.initOwner(getScene().getWindow());
-		} else
-			stage = this.stage;
-		stage.setAlwaysOnTop(true);
-		stage.show();
+		if (newWindow == null) {
+			newWindow = new Stage(StageStyle.TRANSPARENT);
+			newWindow.initOwner(getScene().getWindow());
+			newWindow.setAlwaysOnTop(true);
+		}
+		newWindow.setScene(new Scene(new NewConstructWindowImpl(this, newWindow), Color.TRANSPARENT));
+		newWindow.show();
 	}
 
 	private class ConstructCell<T> extends TableCell<Construct, T> {

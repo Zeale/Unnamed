@@ -10,9 +10,10 @@ import javafx.scene.paint.Color;
 
 public class UWindowBase extends BorderPane {
 
-	public static final Color DEFAULT_WINDOW_COLOR = Unnamed.DEFAULT_WINDOW_COLOR;
-	public static final Color BASE_COLOR = Unnamed.BASE_COLOR;
+	public static final Color DEFAULT_WINDOW_BACKGROUND_COLOR = Unnamed.DEFAULT_WINDOW_COLOR;
+	public static final Color ITEM_BORDER_COLOR = Unnamed.ITEM_BORDER_COLOR;
 	public static final double COMMON_BORDER_WIDTH = FXTools.COMMON_BORDER_WIDTH;
+	public static final Color SECONDARY_WINDOW_BORDER_COLOR = Unnamed.SECONDARY_WINDOW_BORDER_COLOR;
 
 	private final ObjectProperty<MenuBar> menuBar = new SimpleObjectProperty<>(new MenuBar());
 
@@ -20,11 +21,10 @@ public class UWindowBase extends BorderPane {
 		topProperty().bind(menuBar);
 	}
 
-	private static final Color DEFAULT_BACKGROUND_COLOR = Unnamed.DEFAULT_WINDOW_COLOR;
-	private static final Color DEFAULT_BORDER_COLOR = DEFAULT_BACKGROUND_COLOR.darker().darker();
+	protected static final Color DEFAULT_BORDER_COLOR = DEFAULT_WINDOW_BACKGROUND_COLOR.darker().darker();
 
 	{
-		setBackground(FXTools.getBackgroundFromColor(DEFAULT_BACKGROUND_COLOR));
+		setBackground(FXTools.getBackgroundFromColor(DEFAULT_WINDOW_BACKGROUND_COLOR));
 		setBorder(FXTools.getBorderFromColor(DEFAULT_BORDER_COLOR));
 	}
 

@@ -29,8 +29,8 @@ public class MenuBar extends AnchorPane {
 	private final ImageView iconView = new ImageView();
 	private final HBox leftLayout = new HBox(5, iconView);
 
-	private final DoubleProperty rightMenuPadding = new SimpleDoubleProperty(10),
-			rightMenuSpacing = new SimpleDoubleProperty(5);
+	private final DoubleProperty rightMenuPadding = new SimpleDoubleProperty(15),
+			rightMenuSpacing = new SimpleDoubleProperty(10);
 
 	{
 		getChildren().addAll(leftLayout, buttonLayout);
@@ -119,6 +119,8 @@ public class MenuBar extends AnchorPane {
 		AnchorPane.setBottomAnchor(buttonLayout, 0d);
 		AnchorPane.setTopAnchor(buttonLayout, 0d);
 		buttonLayout.spacingProperty().bind(rightMenuSpacing);
+
+		AnchorPane.setRightAnchor(buttonLayout, rightMenuPadding.get());
 		rightMenuPadding.addListener((ChangeListener<Number>) (observable, oldValue, newValue) -> AnchorPane
 				.setRightAnchor(buttonLayout, newValue.doubleValue()));
 

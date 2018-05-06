@@ -34,7 +34,7 @@ public class ItemBox extends ScrollPane {
 
 	private static final double DEFAULT_BORDER_WIDTH = 3;
 	private final static String UNNAMED_STRING = new String("Unnamed");
-	private static final Color DEFAULT_ITEM_COLOR = Unnamed.BASE_COLOR;
+	private static final Color DEFAULT_ITEM_COLOR = Unnamed.ITEM_BORDER_COLOR;
 
 	private final DoubleProperty itemSize = new SimpleDoubleProperty(140);
 

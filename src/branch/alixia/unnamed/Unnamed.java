@@ -11,7 +11,8 @@ import javafx.stage.StageStyle;
 public final class Unnamed extends Application {
 
 	public static final Color DEFAULT_WINDOW_COLOR = new Color(0.34, 0.34, 0.34, 1);
-	public static final Color BASE_COLOR = Color.BLUE;
+	public static final Color ITEM_BORDER_COLOR = Color.BLUE;
+	public static final Color SECONDARY_WINDOW_BORDER_COLOR = ITEM_BORDER_COLOR.interpolate(DEFAULT_WINDOW_COLOR, 0.5);
 
 	public static final File PROGRAM_ROOT = new File(System.getProperty("user.home"), "Unnamed");
 
@@ -70,7 +71,7 @@ public final class Unnamed extends Application {
 	public static void setScene(Scene scene) {
 		stage.setScene(scene);
 	}
-	
+
 	static Stage getStage() {
 		return stage;
 	}

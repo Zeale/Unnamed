@@ -3,7 +3,6 @@ package branch.alixia.unnamed;
 import branch.alixia.kröw.unnamed.guis.constructs.ConstructWindowImpl;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
 
 public final class MSGUIs {
 
@@ -11,12 +10,8 @@ public final class MSGUIs {
 
 	}
 
-	public static Parent openConstructWindow(Stage stage) {
-		return new ConstructWindowImpl(stage);
-	}
-
 	public static Parent openConstructWindow() {
-		return new ConstructWindowImpl(null);
+		return new ConstructWindowImpl();
 	}
 
 	public static void showHomeWindow() {
