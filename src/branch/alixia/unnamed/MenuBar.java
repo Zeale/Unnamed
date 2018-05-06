@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -55,6 +56,14 @@ public class MenuBar extends AnchorPane {
 			add();
 		}
 
+		public final void setOnMouseEntered(EventHandler<? super MouseEvent> value) {
+			button.setOnMouseEntered(value);
+		}
+
+		public final void setOnMouseExited(EventHandler<? super MouseEvent> value) {
+			button.setOnMouseExited(value);
+		}
+
 		public void add() {
 			buttonLayout.getChildren().add(button);
 		}
@@ -69,6 +78,19 @@ public class MenuBar extends AnchorPane {
 		}
 
 		public MenuItem() {
+		}
+
+		public MenuItem(Node... nodes) {
+			for (Node n : nodes)
+				addChild(n);
+		}
+
+		public void addChild(Node child) {
+			button.getChildren().add(child);
+		}
+
+		public void removeChild(Node child) {
+			button.getChildren().remove(child);
 		}
 
 		public void addShape(Shape shape) {

@@ -7,11 +7,15 @@ import branch.alixia.guis.UWindowBase;
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.msapi.Construct;
 import branch.alixia.unnamed.MenuBar;
+import javafx.animation.FillTransition;
+import javafx.animation.SequentialTransition;
+import javafx.animation.Transition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -27,6 +31,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 public class ConstructWindowImpl extends UWindowBase {
 
@@ -126,11 +131,11 @@ public class ConstructWindowImpl extends UWindowBase {
 		 * (Testing Code)
 		 */
 
-		Button newButton = new Button("New");
-		newButton.setOnAction(event -> showNewMenu());
+		Text newTab = getFormattedMenuText("New");
+		rightToolBar.new MenuItem((Node) newTab);
 
-		rightToolBar.new MenuItem(getFormattedMenuText("View"));
-		rightToolBar.new MenuItem(getFormattedMenuText("New"));
+		newTab.setOnMouseClicked(event -> showNewMenu());
+
 		rightToolBar.setPrefHeight(30);
 		rightToolBar.setRightMenuPadding(15);
 		rightToolBar.setRightMenuSpacing(10);
@@ -140,9 +145,30 @@ public class ConstructWindowImpl extends UWindowBase {
 	private static Text getFormattedMenuText(String text) {
 		Text t = new Text(text);
 		t.setFont(Font.font(null, FontWeight.BOLD, -1));
-		t.setFill(Color.BLUE);
+
+		applyColorwheelTransition(t, Duration.seconds(0.5), Color.RED, Color.GOLD, Color.GREEN, Color.BLUE);
+
 		return t;
 	}
+
+	private static void applyColorwheelTransition(Text t, Duration duration, Color... colors) {
+		t.setFill(colors[0]);
+		FillTransition[] transitions = new FillTransition[colors.length];
+		for (int i = 0; i < colors.length - 1;)
+			transitions[i] = new FillTransition(duration, t, colors[i], colors[++i]);
+
+		transitions[transitions.length - 1] = new FillTransition(duration, t, colors[colors.length - 1], colors[0]);
+
+		SequentialTransition repeater = new SequentialTransition(transitions);
+
+		repeater.setCycleCount(Transition.INDEFINITE);
+
+		t.setOnMouseEntered(event -> repeater.play());
+		t.setOnMouseExited(event -> repeater.pause());
+
+	}
+
+	private final Group viewGroup = new Group(), newGroup = new Group();
 
 	private void showNewMenu() {
 		// TODO Implement
