@@ -97,4 +97,18 @@ public class PropertyVerifier<T> implements ChangeListener<T> {
 			property.setValue(defaultValue);
 	}
 
+	public static <P extends WritableValue<T> & ObservableValue<T>, T> PropertyVerifier<T> attachNullVerifier(
+			P property) {
+		PropertyVerifier<T> verifier = new PropertyVerifier<>(property);
+		property.addListener(verifier);
+		return verifier;
+	}
+
+	public static <P extends WritableValue<String> & ObservableValue<String>> StringPropertyVerifier attachStringVerifier(
+			P property) {
+		StringPropertyVerifier verifier = new StringPropertyVerifier(property);
+		property.addListener(verifier);
+		return verifier;
+	}
+
 }
