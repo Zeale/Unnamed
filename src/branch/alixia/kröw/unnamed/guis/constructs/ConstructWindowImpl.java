@@ -82,7 +82,8 @@ public class ConstructWindowImpl extends UWindowBase {
 	private static final void refresh() {
 		try {
 			for (Construct construct : loadConstructs())
-				CONSTRUCT_LIST.add(construct);
+				if (!CONSTRUCT_LIST.contains(construct))
+					CONSTRUCT_LIST.add(construct);
 			saveAvailable = true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -113,7 +114,10 @@ public class ConstructWindowImpl extends UWindowBase {
 	private void saveConstruct(Construct construct) throws IOException {
 		File file;
 		long numb = 0;
-		while ((file = new File(CONSTRUCT_DIRECTORY, construct.getName() + "_" + numb++ + ".msc")).exists())
+
+		// There is literally like, a zero % chance that the "uniqueID" will not be
+		// unique when its generated, but I like the while loop I made.
+		while ((file = new File(CONSTRUCT_DIRECTORY, construct.getUniqueID() + "_" + numb++ + ".msc")).exists())
 			;
 		try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(file))) {
 			output.writeObject(construct);

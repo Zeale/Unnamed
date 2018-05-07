@@ -64,10 +64,16 @@ public class Construct implements Externalizable {
 		if (in.readLong() != CLASS_VERSION)
 			throw new IOException("Incompatible Construct Version");
 
-		uniqueID.set((UUID) in.readObject());
-		name.set(in.readUTF());
-		description.set(in.readUTF());
-		birthDate.set((Instant) in.readObject());
+		try {
+			uniqueID.set((UUID) in.readObject());
+			name.set(in.readUTF());
+			description.set(in.readUTF());
+			birthDate.set((Instant) in.readObject());
+		} catch (IOException e) {
+			// We've reached the end of this construct's data. (The construct is a different
+			// version and doesn't have any values after this). Everything below here gets
+			// initialized to its default value.
+		}
 	}
 
 	public final StringProperty nameProperty() {
@@ -112,6 +118,17 @@ public class Construct implements Externalizable {
 
 	public final UUID getUniqueID() {
 		return this.uniqueIDProperty().get();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		// Return true if both are constructs and have equal UUIDs. IDs are supposed to
+		// be "unique" and *they are*, but when loading a construct from the file
+		// system, via a "reload" method, perhaps, constructs that have been already
+		// loaded will get loaded again, so the constructs that are already loaded are
+		// detected and discarded. This equals method is used for comparison to detect
+		// already loaded constructs.
+		return obj instanceof Construct ? ((Construct) obj).getUniqueID().equals(getUniqueID()) : false;
 	}
 
 }
