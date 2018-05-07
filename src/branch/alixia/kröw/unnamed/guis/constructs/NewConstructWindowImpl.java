@@ -1,5 +1,6 @@
 package branch.alixia.kröw.unnamed.guis.constructs;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
@@ -91,11 +92,12 @@ class NewConstructWindowImpl extends UWindowBase {
 
 			@Override
 			public void handle(ActionEvent event) {
-				// String name = nameInput.getText(), description = descriptionInput.getText();
-				// LocalDate date = birthdayInput.getValue();
+				String name = nameInput.getText(), description = descriptionInput.getText();
+				LocalDate date = birthdayInput.getValue();
+				Instant time;
+				time = date == null ? null : date.atStartOfDay(ZoneId.systemDefault()).toInstant();
 
-				Construct construct = new Construct(nameInput.getText(), descriptionInput.getText(),
-						birthdayInput.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+				Construct construct = new Construct(name, description, time);
 				owner.addConstruct(construct);
 				stage.close();
 			}

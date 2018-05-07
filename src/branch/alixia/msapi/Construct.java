@@ -6,6 +6,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.time.Instant;
 
+import branch.alixia.msapi.tools.PropertyVerifier;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -18,10 +19,23 @@ public class Construct implements Externalizable {
 	private static final long serialVersionUID = 1L;
 	private static final long CLASS_VERSION = 1L;
 
+	/*
+	 * ********** PROPERTIES **********
+	 * 
+	 * Any of these that do not have a default value should not be given a
+	 * PropertyVerifier with the default implementation.
+	 * 
+	 */
+
 	private transient final StringProperty name = new SimpleStringProperty("Unnamed"),
 			description = new SimpleStringProperty("Empty description.");
+	private transient final SimpleObjectProperty<Instant> birthDate = new SimpleObjectProperty<>(Instant.now());
 
-	private transient final SimpleObjectProperty<Instant> birthDate = new SimpleObjectProperty<>();
+	{
+		name.addListener(new PropertyVerifier<>(name));
+		description.addListener(new PropertyVerifier<>(description));
+		birthDate.addListener(new PropertyVerifier<>(birthDate));
+	}
 
 	public Construct() {
 	}
