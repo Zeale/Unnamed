@@ -94,8 +94,7 @@ class NewConstructWindowImpl extends UWindowBase {
 			public void handle(ActionEvent event) {
 				String name = nameInput.getText(), description = descriptionInput.getText();
 				LocalDate date = birthdayInput.getValue();
-				Instant time;
-				time = date == null ? null : date.atStartOfDay(ZoneId.systemDefault()).toInstant();
+				Instant time = date == null ? null : date.atStartOfDay(ZoneId.systemDefault()).toInstant();
 
 				Construct construct = new Construct(name, description, time);
 				owner.addConstruct(construct);

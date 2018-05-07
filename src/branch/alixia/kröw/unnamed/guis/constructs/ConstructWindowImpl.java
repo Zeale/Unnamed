@@ -1,19 +1,28 @@
 package branch.alixia.kröw.unnamed.guis.constructs;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.time.Instant;
-import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
+import branch.alixia.files.Directories;
 import branch.alixia.guis.UWindowBase;
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.msapi.Construct;
 import branch.alixia.unnamed.MenuBar;
+import branch.alixia.unnamed.Unnamed;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -39,9 +48,86 @@ public class ConstructWindowImpl extends UWindowBase {
 
 	private final static ObservableList<Construct> CONSTRUCT_LIST = FXCollections
 			.synchronizedObservableList(FXCollections.observableArrayList());
+	private static boolean saveAvailable;
+
+	private static final File CONSTRUCT_DIRECTORY = new File(Unnamed.PROGRAM_ROOT, "Constructs");
+
+	static {
+		refresh();
+	}
+
+	private static boolean isSaveAvailable() {
+		return saveAvailable;
+	}
+
+	public static List<Construct> loadConstructs() throws IOException {
+		if (!Directories.makeDirectory(CONSTRUCT_DIRECTORY))
+			throw new IOException("The save directory is not available.");
+
+		File[] files = CONSTRUCT_DIRECTORY.listFiles();
+		List<Construct> constructs = new LinkedList<>();
+
+		for (File f : files)
+			if (f.getName().toLowerCase().endsWith(".msc"))
+				try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(f))) {
+					constructs.add((Construct) input.readObject());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+		return constructs;
+
+	}
+
+	private static final void refresh() {
+		try {
+			for (Construct construct : loadConstructs())
+				CONSTRUCT_LIST.add(construct);
+			saveAvailable = true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			saveAvailable = false;
+		}
+	}
 
 	public void addConstruct(Construct construct) {
 		CONSTRUCT_LIST.add(construct);
+		if (!isSaveAvailable())
+			notifySaveUnavailable();
+		else
+			try {
+				saveConstruct(construct);
+			} catch (IOException e) {
+				e.printStackTrace();
+				Dialog<Void> notification = new Dialog<>();
+				notification.initOwner(getScene().getWindow());
+				notification.setContentText(
+						"Failed to save the construct. (The construct will still exist inside the program so you can save it to a custom location).");
+				notification.setHeaderText("Failed to Save Construct");
+				notification.setTitle("Save Failure");
+				notification.showAndWait();
+			}
+
+	}
+
+	private void saveConstruct(Construct construct) throws IOException {
+		File file;
+		long numb = 0;
+		while ((file = new File(CONSTRUCT_DIRECTORY, construct.getName() + "_" + numb++ + ".msc")).exists())
+			;
+		try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(file))) {
+			output.writeObject(construct);
+		}
+	}
+
+	private void notifySaveUnavailable() {
+		Dialog<Void> notification = new Dialog<>();
+		notification.initOwner(getScene().getWindow());
+		notification.setContentText(
+				"Saving and loading constructs to/from the default directory is unavailable. Please save to a specific location when you are finished.");
+		notification.setHeaderText("Default Save Location Unavailable");
+		notification.setTitle("Save Location");
+		notification.showAndWait();
 	}
 
 	public void removeConstruct(Construct construct) {
@@ -208,6 +294,10 @@ public class ConstructWindowImpl extends UWindowBase {
 			super.updateItem(item, empty);
 			setText(item);
 		}
+	}
+
+	public static void loadSet() {
+
 	}
 
 }
