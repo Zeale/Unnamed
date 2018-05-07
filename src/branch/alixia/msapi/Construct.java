@@ -7,6 +7,7 @@ import java.io.ObjectOutput;
 import java.time.Instant;
 
 import branch.alixia.msapi.tools.PropertyVerifier;
+import branch.alixia.msapi.tools.StringPropertyVerifier;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -32,8 +33,8 @@ public class Construct implements Externalizable {
 	private transient final SimpleObjectProperty<Instant> birthDate = new SimpleObjectProperty<>(Instant.now());
 
 	{
-		name.addListener(new PropertyVerifier<>(name));
-		description.addListener(new PropertyVerifier<>(description));
+		name.addListener(new StringPropertyVerifier(name));
+		description.addListener(new StringPropertyVerifier(description));
 		birthDate.addListener(new PropertyVerifier<>(birthDate));
 	}
 
