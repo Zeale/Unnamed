@@ -1,6 +1,7 @@
 package branch.alixia.kröw.unnamed.guis.constructs;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Date;
 
 import branch.alixia.guis.UWindowBase;
@@ -49,7 +50,7 @@ public class ConstructWindowImpl extends UWindowBase {
 
 	private @FXML TableView<Construct> constructs = null;
 	private @FXML TableColumn<Construct, String> name = null, description = null;
-	private @FXML TableColumn<Construct, Date> birthday = null;
+	private @FXML TableColumn<Construct, Instant> birthday = null;
 
 	private final ScrollPane centerWrapper = new ScrollPane();
 
@@ -120,8 +121,8 @@ public class ConstructWindowImpl extends UWindowBase {
 		 */
 		name.setCellFactory(param -> new StringCell());
 		description.setCellFactory(param -> new StringCell());
-		birthday.setCellFactory(param -> new ConstructCell<Date>() {
-			protected void updateItem(Date item, boolean empty) {
+		birthday.setCellFactory(param -> new ConstructCell<Instant>() {
+			protected void updateItem(Instant item, boolean empty) {
 				super.updateItem(item, empty);
 				if (item != null)
 					setText(item.toString());

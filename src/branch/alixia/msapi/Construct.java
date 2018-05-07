@@ -4,7 +4,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.Date;
+import java.time.Instant;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -20,12 +20,13 @@ public class Construct implements Externalizable {
 
 	private transient final StringProperty name = new SimpleStringProperty("Unnamed"),
 			description = new SimpleStringProperty("Empty description.");
-	private transient final SimpleObjectProperty<Date> birthDate = new SimpleObjectProperty<>();
+
+	private transient final SimpleObjectProperty<Instant> birthDate = new SimpleObjectProperty<>();
 
 	public Construct() {
 	}
 
-	public Construct(String name, String description, Date birthday) {
+	public Construct(String name, String description, Instant birthday) {
 		setName(name);
 		setDescription(description);
 		setBirthDate(birthday);
@@ -47,7 +48,7 @@ public class Construct implements Externalizable {
 
 		name.set(in.readUTF());
 		description.set(in.readUTF());
-		birthDate.set((Date) in.readObject());
+		birthDate.set((Instant) in.readObject());
 	}
 
 	public final StringProperty nameProperty() {
@@ -74,15 +75,15 @@ public class Construct implements Externalizable {
 		this.descriptionProperty().set(description);
 	}
 
-	public final SimpleObjectProperty<Date> birthDateProperty() {
+	public final SimpleObjectProperty<Instant> birthDateProperty() {
 		return this.birthDate;
 	}
 
-	public final Date getBirthDate() {
+	public final Instant getBirthDate() {
 		return this.birthDateProperty().get();
 	}
 
-	public final void setBirthDate(final Date birthDate) {
+	public final void setBirthDate(final Instant birthDate) {
 		this.birthDateProperty().set(birthDate);
 	}
 

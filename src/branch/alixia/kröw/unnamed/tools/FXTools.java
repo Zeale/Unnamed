@@ -9,6 +9,8 @@ import branch.alixia.unnamed.Unnamed;
 import javafx.animation.FillTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.Transition;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.control.Button;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Border;
@@ -70,6 +72,12 @@ public final class FXTools {
 			r.setBorder(getBorderFromColor(Unnamed.ITEM_BORDER_COLOR));
 			r.getStylesheets().add("branch/alixia/kröw/unnamed/tools/basicInputStyleStylesheet.css");
 			r.getStyleClass().add("basic-input");
+
+			final Color toColor = r instanceof Button ? RED : GREEN;
+			(r instanceof Button ? ((Button) r).armedProperty() : r.focusedProperty())
+					.addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> r
+							.setBorder(getBorderFromColor(newValue ? toColor : Unnamed.ITEM_BORDER_COLOR)));
+
 		}
 	}
 

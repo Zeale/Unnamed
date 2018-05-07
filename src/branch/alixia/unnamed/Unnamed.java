@@ -54,7 +54,7 @@ public final class Unnamed extends Application {
 		showHome();
 
 		// The home window will need to verify that everything has loaded before it lets
-		// the user click buttons that involve loaded items.
+		// the user clicks buttons that involve loaded items.
 		if (!PROGRAM_ROOT.isDirectory()) {
 			// TODO Load things and have the HomeWindow reflect what has been loaded.
 		}

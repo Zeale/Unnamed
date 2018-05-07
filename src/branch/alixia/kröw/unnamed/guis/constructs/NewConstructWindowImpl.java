@@ -1,7 +1,12 @@
 package branch.alixia.kröw.unnamed.guis.constructs;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+
 import branch.alixia.guis.UWindowBase;
 import branch.alixia.kröw.unnamed.tools.FXTools;
+import branch.alixia.msapi.Construct;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -24,7 +29,7 @@ class NewConstructWindowImpl extends UWindowBase {
 	private final TextArea descriptionInput = new TextArea();
 
 	private final VBox innerContentWrapper = new VBox(20, nameInput, birthdayInput, descriptionInput);
-	private final Button doneButton = new Button("Done");
+	private final Button doneButton = new Button("Create");
 	private final VBox content = new VBox(50, innerContentWrapper, doneButton);
 
 	private final AnchorPane wrapper = new AnchorPane(content);
@@ -77,10 +82,24 @@ class NewConstructWindowImpl extends UWindowBase {
 		FXTools.styleBasicInput(nameInput, birthdayInput, descriptionInput, doneButton);
 
 		nameInput.setPrefWidth(80);
-		descriptionInput.setPrefSize(200, 200);
+		descriptionInput.setMinSize(200, 200);
 
 		innerContentWrapper.setAlignment(Pos.CENTER);
 		innerContentWrapper.setFillWidth(false);
+
+		doneButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				// String name = nameInput.getText(), description = descriptionInput.getText();
+				// LocalDate date = birthdayInput.getValue();
+
+				Construct construct = new Construct(nameInput.getText(), descriptionInput.getText(),
+						birthdayInput.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+				owner.addConstruct(construct);
+				stage.close();
+			}
+		});
 
 	}
 
