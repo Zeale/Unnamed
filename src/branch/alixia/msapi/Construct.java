@@ -4,13 +4,11 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.time.Instant;
-import java.util.UUID;
 
+import branch.alixia.msapi.tools.MSSTringProperty;
+import branch.alixia.msapi.tools.MindsetObjectProperty;
 import branch.alixia.msapi.tools.PropertyVerifier;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 
 public class Construct extends MindsetObject {
 
@@ -18,7 +16,6 @@ public class Construct extends MindsetObject {
 	 * SUID
 	 */
 	private static final long serialVersionUID = 1L;
-	
 
 	/*
 	 * ********** PROPERTIES **********
@@ -28,8 +25,8 @@ public class Construct extends MindsetObject {
 	 * 
 	 */
 
-	private final StringProperty description = new SimpleStringProperty("Empty description.");
-	private final ObjectProperty<Instant> birthDate = new SimpleObjectProperty<>(Instant.now());
+	private final MSSTringProperty description = new MSSTringProperty("Empty description.");
+	private final ObjectProperty<Instant> birthDate = new MindsetObjectProperty<>(Instant.now());
 
 	{
 		PropertyVerifier.attachStringVerifier(description);
@@ -64,30 +61,6 @@ public class Construct extends MindsetObject {
 		}
 	}
 
-	public final StringProperty nameProperty() {
-		return this.name;
-	}
-
-	public final String getName() {
-		return this.nameProperty().get();
-	}
-
-	public final void setName(final String name) {
-		this.nameProperty().set(name);
-	}
-
-	public final StringProperty descriptionProperty() {
-		return this.description;
-	}
-
-	public final String getDescription() {
-		return this.descriptionProperty().get();
-	}
-
-	public final void setDescription(final String description) {
-		this.descriptionProperty().set(description);
-	}
-
 	public final ObjectProperty<Instant> birthDateProperty() {
 		return this.birthDate;
 	}
@@ -100,14 +73,6 @@ public class Construct extends MindsetObject {
 		this.birthDateProperty().set(birthDate);
 	}
 
-	public final javafx.beans.property.ReadOnlyObjectProperty<java.util.UUID> uniqueIDProperty() {
-		return this.uniqueID.getReadOnlyProperty();
-	}
-
-	public final UUID getUniqueID() {
-		return this.uniqueIDProperty().get();
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		// Return true if both are constructs and have equal UUIDs. IDs are supposed to
@@ -117,6 +82,18 @@ public class Construct extends MindsetObject {
 		// detected and discarded. This equals method is used for comparison to detect
 		// already loaded constructs.
 		return obj instanceof Construct ? ((Construct) obj).getUniqueID().equals(getUniqueID()) : false;
+	}
+
+	public final MSSTringProperty descriptionProperty() {
+		return this.description;
+	}
+
+	public final String getDescription() {
+		return this.descriptionProperty().get();
+	}
+
+	public final void setDescription(final String description) {
+		this.descriptionProperty().set(description);
 	}
 
 }
