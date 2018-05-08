@@ -1,6 +1,5 @@
 package branch.alixia.msapi;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -8,18 +7,18 @@ import java.time.Instant;
 import java.util.UUID;
 
 import branch.alixia.msapi.tools.PropertyVerifier;
-import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class Construct implements Externalizable {
+public class Construct extends MindsetObject {
 
 	/**
 	 * SUID
 	 */
 	private static final long serialVersionUID = 1L;
-	private static final long CLASS_VERSION = 1L;
+	
 
 	/*
 	 * ********** PROPERTIES **********
@@ -29,13 +28,10 @@ public class Construct implements Externalizable {
 	 * 
 	 */
 
-	private final StringProperty name = new SimpleStringProperty("Unnamed"),
-			description = new SimpleStringProperty("Empty description.");
-	private final SimpleObjectProperty<Instant> birthDate = new SimpleObjectProperty<>(Instant.now());
-	private final ReadOnlyObjectWrapper<UUID> uniqueID = new ReadOnlyObjectWrapper<>(UUID.randomUUID());
+	private final StringProperty description = new SimpleStringProperty("Empty description.");
+	private final ObjectProperty<Instant> birthDate = new SimpleObjectProperty<>(Instant.now());
 
 	{
-		PropertyVerifier.attachStringVerifier(name);
 		PropertyVerifier.attachStringVerifier(description);
 		PropertyVerifier.attachNullVerifier(birthDate);
 	}
@@ -51,22 +47,14 @@ public class Construct implements Externalizable {
 
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
-		out.writeLong(CLASS_VERSION);
-
-		out.writeObject(uniqueID.get());
-		out.writeUTF(name.getValueSafe());
 		out.writeUTF(description.getValueSafe());
 		out.writeObject(birthDate.get());
 	}
 
 	@Override
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-		if (in.readLong() != CLASS_VERSION)
-			throw new IOException("Incompatible Construct Version");
 
 		try {
-			uniqueID.set((UUID) in.readObject());
-			name.set(in.readUTF());
 			description.set(in.readUTF());
 			birthDate.set((Instant) in.readObject());
 		} catch (IOException e) {
@@ -100,7 +88,7 @@ public class Construct implements Externalizable {
 		this.descriptionProperty().set(description);
 	}
 
-	public final SimpleObjectProperty<Instant> birthDateProperty() {
+	public final ObjectProperty<Instant> birthDateProperty() {
 		return this.birthDate;
 	}
 
