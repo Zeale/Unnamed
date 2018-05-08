@@ -29,10 +29,10 @@ public class Construct implements Externalizable {
 	 * 
 	 */
 
-	private transient final StringProperty name = new SimpleStringProperty("Unnamed"),
+	private final StringProperty name = new SimpleStringProperty("Unnamed"),
 			description = new SimpleStringProperty("Empty description.");
-	private transient final SimpleObjectProperty<Instant> birthDate = new SimpleObjectProperty<>(Instant.now());
-	private transient final ReadOnlyObjectWrapper<UUID> uniqueID = new ReadOnlyObjectWrapper<UUID>(UUID.randomUUID());
+	private final SimpleObjectProperty<Instant> birthDate = new SimpleObjectProperty<>(Instant.now());
+	private final ReadOnlyObjectWrapper<UUID> uniqueID = new ReadOnlyObjectWrapper<>(UUID.randomUUID());
 
 	{
 		PropertyVerifier.attachStringVerifier(name);

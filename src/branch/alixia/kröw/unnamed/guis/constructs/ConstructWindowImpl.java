@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -48,6 +49,11 @@ public class ConstructWindowImpl extends UWindowBase {
 
 	private final static ObservableList<Construct> CONSTRUCT_LIST = FXCollections
 			.synchronizedObservableList(FXCollections.observableArrayList());
+
+	public static ObservableList<Construct> getConstructList() {
+		return FXCollections.unmodifiableObservableList(CONSTRUCT_LIST);
+	}
+
 	private static boolean saveAvailable;
 
 	private static final File CONSTRUCT_DIRECTORY = new File(Unnamed.PROGRAM_ROOT, "Constructs");
@@ -100,13 +106,9 @@ public class ConstructWindowImpl extends UWindowBase {
 				saveConstruct(construct);
 			} catch (IOException e) {
 				e.printStackTrace();
-				Dialog<Void> notification = new Dialog<>();
-				notification.initOwner(getScene().getWindow());
-				notification.setContentText(
-						"Failed to save the construct. (The construct will still exist inside the program so you can save it to a custom location).");
-				notification.setHeaderText("Failed to Save Construct");
-				notification.setTitle("Save Failure");
-				notification.showAndWait();
+				showDialog(
+						"Failed to save the construct. (The construct will still exist inside the program so you can save it to a custom location).",
+						"Failed to Save Construct", "Save Failure");
 			}
 
 	}
@@ -124,14 +126,19 @@ public class ConstructWindowImpl extends UWindowBase {
 		}
 	}
 
-	private void notifySaveUnavailable() {
+	private final void showDialog(String content, String header, String title) {
 		Dialog<Void> notification = new Dialog<>();
 		notification.initOwner(getScene().getWindow());
-		notification.setContentText(
-				"Saving and loading constructs to/from the default directory is unavailable. Please save to a specific location when you are finished.");
-		notification.setHeaderText("Default Save Location Unavailable");
-		notification.setTitle("Save Location");
+		notification.setContentText(content);
+		notification.setHeaderText(header);
+		notification.setTitle(title);
 		notification.showAndWait();
+	}
+
+	private void notifySaveUnavailable() {
+		showDialog(
+				"Saving and loading constructs to/from the default directory is unavailable. Please save to a specific location when you are finished.",
+				"Default Save Location Unavailable", "Save Location");
 	}
 
 	public void removeConstruct(Construct construct) {
@@ -298,10 +305,6 @@ public class ConstructWindowImpl extends UWindowBase {
 			super.updateItem(item, empty);
 			setText(item);
 		}
-	}
-
-	public static void loadSet() {
-
 	}
 
 }
