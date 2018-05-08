@@ -41,6 +41,10 @@ public class Construct extends MindsetObject {
 		}
 
 		private ClassData(double gradient) {
+			if (gradient > 1000)
+				gradient = 1000;
+			else if (gradient < 0)
+				gradient = 0;
 			gradientFraction = gradient;
 			classes.add(Class.MECHANICAL);
 			classes.add(Class.PERSONALITY);
@@ -91,10 +95,13 @@ public class Construct extends MindsetObject {
 
 	private final MSSTringProperty description = new MSSTringProperty("Empty description.");
 	private final ObjectProperty<Instant> birthDate = new MindsetObjectProperty<>(Instant.now());
+	private final ObjectProperty<ClassData> classData = new MindsetObjectProperty<Construct.ClassData>(
+			ClassData.getDefaultClass());
 
 	{
 		PropertyVerifier.attachStringVerifier(description);
 		PropertyVerifier.attachNullVerifier(birthDate);
+		PropertyVerifier.attachNullVerifier(classData);
 	}
 
 	public Construct() {
@@ -158,6 +165,18 @@ public class Construct extends MindsetObject {
 
 	public final void setDescription(final String description) {
 		this.descriptionProperty().set(description);
+	}
+
+	public final ObjectProperty<ClassData> classDataProperty() {
+		return this.classData;
+	}
+
+	public final ClassData getClassData() {
+		return this.classDataProperty().get();
+	}
+
+	public final void setClassData(final ClassData classData) {
+		this.classDataProperty().set(classData);
 	}
 
 }

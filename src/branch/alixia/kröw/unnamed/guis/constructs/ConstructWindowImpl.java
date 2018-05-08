@@ -14,8 +14,11 @@ import branch.alixia.files.Directories;
 import branch.alixia.guis.UWindowBase;
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.msapi.Construct;
+import branch.alixia.msapi.Construct.Class;
+import branch.alixia.msapi.Construct.ClassData;
 import branch.alixia.unnamed.MenuBar;
 import branch.alixia.unnamed.Unnamed;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -150,7 +153,7 @@ public class ConstructWindowImpl extends UWindowBase {
 	private @FXML TableColumn<Construct, String> name, description;
 	private @FXML TableColumn<Construct, Instant> birthday;
 	private @FXML TableColumn<Construct, Construct.ClassData> classData;
-	private @FXML TableColumn<Construct, Construct.Class> classes;
+	private @FXML TableColumn<Construct, ClassData> classes;
 	private @FXML TableColumn<Construct, Double> gradientValue;
 
 	private final ScrollPane centerWrapper = new ScrollPane();
@@ -215,6 +218,9 @@ public class ConstructWindowImpl extends UWindowBase {
 		name.setCellValueFactory(param -> param.getValue().nameProperty());
 		description.setCellValueFactory(param -> param.getValue().descriptionProperty());
 		birthday.setCellValueFactory(param -> param.getValue().birthDateProperty());
+		classes.setCellValueFactory(param -> param.getValue().classDataProperty());
+		gradientValue.setCellValueFactory(param -> Bindings.createObjectBinding(
+				() -> param.getValue().getClassData().getGradientFraction(), param.getValue().classDataProperty()));
 
 		/*
 		 * Cell Factories
@@ -227,6 +233,45 @@ public class ConstructWindowImpl extends UWindowBase {
 				if (item != null)
 					setText(item.toString());
 			};
+		});
+		classes.setCellFactory(param -> new ConstructCell<ClassData>() {
+			protected void updateItem(ClassData item, boolean empty) {
+				super.updateItem(item, empty);
+				if (empty)
+					return;
+				setText(item.getClasses().toString());
+				if (item.getClasses().contains(Class.BIG_DADDY))
+					setTextFill(Color.FIREBRICK);
+				else if (item.getClasses().contains(Class.ELEVATED_TITAN)
+						|| item.getClasses().contains(Class.HONORARY_TITAN))
+					if (item.getClasses().contains(Class.ELEVATED_TITAN)
+							&& item.getClasses().contains(Class.HONORARY_TITAN))
+						setTextFill(Color.AQUAMARINE);
+					else
+						setTextFill(Color.GREEN);
+				else if (item.getClasses().contains(Class.PROPER_TITAN))
+					setTextFill(Color.BLUE);
+				else if (item.getClasses().contains(Class.PERSONALITY))
+					setTextFill(Color.PURPLE.interpolate(Color.LIME, item.getGradientFraction() / 1000));
+			};
+		});
+		gradientValue.setCellFactory(param -> {
+			ConstructCell<Double> cell = new ConstructCell<Double>() {
+				protected void updateItem(Double item, boolean empty) {
+
+					super.updateItem(item, empty);
+					if (empty)
+						return;
+					if (item < 0) {
+						setText("N/A");
+						setTextFill(Color.RED);
+					} else {
+						setTextFill(DEFAULT_CELL_TEXT_FILL);
+						setText(item / 1000 + "");
+					}
+				};
+			};
+			return cell;
 		});
 
 		constructs.setRowFactory(param -> new ConstructRow());
@@ -275,8 +320,10 @@ public class ConstructWindowImpl extends UWindowBase {
 
 	private class ConstructCell<T> extends TableCell<Construct, T> {
 
+		protected final Color DEFAULT_CELL_TEXT_FILL = Color.WHITE;
+
 		{
-			setTextFill(Color.WHITE);
+			setTextFill(DEFAULT_CELL_TEXT_FILL);
 		}
 
 		@Override
