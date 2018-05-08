@@ -9,14 +9,18 @@ import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.msapi.Construct;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -24,6 +28,19 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 class NewConstructWindowImpl extends UWindowBase {
+
+	public NewConstructWindowImpl(ConstructWindowImpl owner, Stage stage) {
+		this.owner = owner;
+		this.stage = stage;
+	}
+
+	private final Stage stage;
+	private final ConstructWindowImpl owner;
+
+	/*
+	 * Main Content
+	 */
+	private final Button moreOptions = new Button("...");
 
 	private final TextField nameInput = new TextField();
 	private final DatePicker birthdayInput = new DatePicker();
@@ -33,11 +50,9 @@ class NewConstructWindowImpl extends UWindowBase {
 	private final Button doneButton = new Button("Create");
 	private final VBox content = new VBox(50, innerContentWrapper, doneButton);
 
-	private final AnchorPane wrapper = new AnchorPane(content);
+	private final AnchorPane wrapper = new AnchorPane(content, moreOptions);
 
 	private final Text cancel = new Text("Cancel");
-
-	private final Stage stage;
 
 	{
 
@@ -45,6 +60,7 @@ class NewConstructWindowImpl extends UWindowBase {
 		 * Pane Layout
 		 */
 		setMinSize(800, 600);
+		setPrefSize(800, 600);
 		setCenter(wrapper);
 		setBorder(FXTools.getBorderFromColor(ITEM_BORDER_COLOR.interpolate(DEFAULT_WINDOW_BACKGROUND_COLOR, 0.5)));
 
@@ -80,7 +96,7 @@ class NewConstructWindowImpl extends UWindowBase {
 		nameInput.setPromptText("Construct Name");
 		descriptionInput.setPromptText("Description");
 
-		FXTools.styleBasicInput(nameInput, birthdayInput, descriptionInput, doneButton);
+		FXTools.styleBasicInput(nameInput, birthdayInput, descriptionInput, doneButton, moreOptions);
 
 		nameInput.setPrefWidth(80);
 		descriptionInput.setMinSize(200, 200);
@@ -89,7 +105,6 @@ class NewConstructWindowImpl extends UWindowBase {
 		innerContentWrapper.setFillWidth(false);
 
 		doneButton.setOnAction(new EventHandler<ActionEvent>() {
-
 			@Override
 			public void handle(ActionEvent event) {
 				String name = nameInput.getText(), description = descriptionInput.getText();
@@ -107,13 +122,53 @@ class NewConstructWindowImpl extends UWindowBase {
 			}
 		});
 
+		AnchorPane.setRightAnchor(moreOptions, 35d);
+		AnchorPane.setTopAnchor(moreOptions, 35d);
+		moreOptions.setOnAction(event -> showExtraProperties());
+
 	}
 
-	private final ConstructWindowImpl owner;
+	private void showExtraProperties() {
+		setPrefSize(1400, 800);
+		setCenter(optionsScrollWrapper);
+	}
 
-	public NewConstructWindowImpl(ConstructWindowImpl owner, Stage stage) {
-		this.owner = owner;
-		this.stage = stage;
+	/*
+	 * Extra Properties Window
+	 */
+
+	private final RadioButton minor = new RadioButton("Minor"), major = new RadioButton("Major"),
+			perMech = new RadioButton("Personality/Mechanical"), properTitan = new RadioButton("Proper Titan"),
+			elevatedTitan = new RadioButton("Elevated Titan"), honoraryTitan = new RadioButton("Honorary Titan");
+
+	private final TilePane classWrapper = new TilePane(minor, major, perMech, properTitan, elevatedTitan,
+			honoraryTitan);
+
+	private final Button back = new Button("<--");
+
+	private final VBox optionsContent = new VBox(20, classWrapper);
+	private final AnchorPane optionsWrapper = new AnchorPane(optionsContent, back);
+	private final ScrollPane optionsScrollWrapper = new ScrollPane(optionsWrapper);
+
+	{
+
+		AnchorPane.setTopAnchor(back, 35d);
+		AnchorPane.setLeftAnchor(back, 35d);
+
+		classWrapper.setHgap(15);
+		classWrapper.setVgap(5);
+		classWrapper.setAlignment(Pos.CENTER);
+		classWrapper.setPadding(new Insets(0, 25, 0, 25));
+
+		FXTools.styleBasicInput(back);
+		back.setOnAction(event -> showNormalProperties());
+
+		FXTools.setDefaultBackground(optionsScrollWrapper);
+	}
+
+	private void showNormalProperties() {
+		setPrefSize(800, 600);
+		setCenter(wrapper);
 	}
 
 }

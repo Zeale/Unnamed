@@ -11,6 +11,7 @@ import javafx.animation.SequentialTransition;
 import javafx.animation.Transition;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Border;
@@ -77,7 +78,14 @@ public final class FXTools {
 			(r instanceof Button ? ((Button) r).armedProperty() : r.focusedProperty())
 					.addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> r
 							.setBorder(getBorderFromColor(newValue ? toColor : Unnamed.ITEM_BORDER_COLOR)));
+		}
+	}
 
+	public static void setDefaultBackground(Region item) {
+		item.setBackground(getBackgroundFromColor(Unnamed.DEFAULT_WINDOW_COLOR));
+		if (item instanceof ScrollPane) {
+			item.getStylesheets().add("branch/alixia/kröw/unnamed/tools/default-background.css");
+			item.getStyleClass().add("default-background");
 		}
 	}
 
