@@ -262,11 +262,11 @@ public class ConstructWindowImpl extends UWindowBase {
 					super.updateItem(item, empty);
 					if (empty)
 						return;
-					if (item < 0) {
+					if (item < 0 || item > 1000) {
 						setText("N/A");
 						setTextFill(Color.RED);
 					} else {
-						setTextFill(DEFAULT_CELL_TEXT_FILL);
+						setTextFill(Color.PURPLE.interpolate(Color.LIME, item / 1000));
 						setText(item / 1000 + "");
 					}
 				};
