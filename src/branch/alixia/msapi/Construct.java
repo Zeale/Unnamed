@@ -119,16 +119,19 @@ public class Construct extends MindsetObject {
 
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
+		super.writeExternal(out);
 		out.writeUTF(description.getValueSafe());
 		out.writeObject(birthDate.get());
+		out.writeObject(classData.get());
 	}
 
 	@Override
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-
+		super.readExternal(in);
 		try {
 			description.set(in.readUTF());
 			birthDate.set((Instant) in.readObject());
+			classData.set((ClassData) in.readObject());
 		} catch (IOException e) {
 			// We've reached the end of this construct's data. (The construct is a different
 			// version and doesn't have any values after this). Everything below here gets

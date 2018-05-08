@@ -32,8 +32,8 @@ public abstract class MindsetObject implements Externalizable {
 		out.writeLong(CLASS_VERSION);
 
 		out.writeObject(uniqueID.get());
-		out.writeObject(name);
-		out.writeObject(otherIdentifiers);
+		out.writeUTF(name.get());
+		out.writeObject(otherIdentifiers.get());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -48,6 +48,7 @@ public abstract class MindsetObject implements Externalizable {
 			name.set(in.readUTF());
 			otherIdentifiers.set((List<Object>) in.readObject());
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
