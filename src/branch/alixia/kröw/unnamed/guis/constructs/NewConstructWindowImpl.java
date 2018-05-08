@@ -7,21 +7,31 @@ import java.time.ZoneId;
 import branch.alixia.guis.UWindowBase;
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.msapi.Construct;
+import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -137,29 +147,77 @@ class NewConstructWindowImpl extends UWindowBase {
 	 * Extra Properties Window
 	 */
 
-	private final ToggleGroup minorMajorGroup = new ToggleGroup(), pMTGroup = new ToggleGroup();
-	private final RadioButton minor = new RadioButton("Minor"), major = new RadioButton("Major"),
-			perMech = new RadioButton("Personality/Mechanical"), properTitan = new RadioButton("Proper Titan"),
-			elevatedTitan = new RadioButton("Elevated Titan"), honoraryTitan = new RadioButton("Honorary Titan");
+	private final Button back = new Button("<--");
 
+	private final ToggleGroup overallClass = new ToggleGroup();
+	private final RadioButton minor = new RadioButton("Minor"), major = new RadioButton("Major");
+	private final CheckBox properTitan = new CheckBox("Proper Titan"), elevatedTitan = new CheckBox("Elevated Titan"),
+			honoraryTitan = new CheckBox("Honorary Titan"), perMech = new CheckBox("Personality/Mechanical");
 	private final TilePane classWrapper = new TilePane(minor, major, perMech, properTitan, elevatedTitan,
 			honoraryTitan);
 
-	private final Button back = new Button("<--");
+	private final Slider perMechDegrees = new Slider(0, 1000, 0);
 
-	private final VBox optionsContent = new VBox(20, classWrapper);
+	private final Separator classSplitter = new Separator();
+
+	private final VBox optionsContent = new VBox(20, classWrapper, perMechDegrees, classSplitter);
 	private final AnchorPane optionsWrapper = new AnchorPane(optionsContent, back);
 	private final ScrollPane optionsScrollWrapper = new ScrollPane(optionsWrapper);
 
+	private void setDisable(boolean disabled, Node... nodes) {
+		for (Node n : nodes)
+			n.setDisable(disabled);
+	}
+
 	{
+
+		/*
+		 * Class Selector Setup
+		 */
+
+		// Make sure that you can't select both major and minor simulataneously.
+		overallClass.getToggles().addAll(minor, major);
+
+		// If the major is not selected, disable the classes that can only be selected
+		// if major is selected.
+		major.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue,
+				newValue) -> setDisable(!newValue, properTitan, elevatedTitan, honoraryTitan, perMech));
+
+		properTitan.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue,
+				newValue) -> setDisable(newValue, elevatedTitan, honoraryTitan, perMech));
+
+		perMech.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+			perMechDegrees.setDisable(!newValue);
+			setDisable(newValue, elevatedTitan, honoraryTitan, properTitan);
+		});
+
+		/*
+		 * Honorary and Elevated Titan classes.
+		 */
+		ChangeListener<Boolean> multiTitans = (observable, oldValue, newValue) -> {
+			if (newValue)
+				setDisable(true, perMech, properTitan);
+			else if (!elevatedTitan.isSelected() && !honoraryTitan.isSelected())
+				setDisable(false, perMech, properTitan);
+		};
+		elevatedTitan.selectedProperty().addListener(multiTitans);
+		honoraryTitan.selectedProperty().addListener(multiTitans);
+
+		perMechDegrees.setDisable(true);
+		major.setSelected(true);
+
+		/*
+		 * Window Initialization
+		 */
+
+		classSplitter.prefWidthProperty().bind(optionsContent.widthProperty());
 
 		AnchorPane.setTopAnchor(optionsContent, 110d);
 		AnchorPane.setRightAnchor(optionsContent, 0d);
 		AnchorPane.setLeftAnchor(optionsContent, 0d);
 		AnchorPane.setBottomAnchor(optionsContent, 0d);
-
-		minorMajorGroup.getToggles().addAll(minor, major);
-		pMTGroup.getToggles().addAll(perMech, properTitan, elevatedTitan, honoraryTitan);
+		optionsContent.setAlignment(Pos.CENTER);
+		optionsContent.setFillWidth(false);
 
 		FXTools.styleBasicInput(minor, major, perMech, properTitan, elevatedTitan, honoraryTitan);
 
