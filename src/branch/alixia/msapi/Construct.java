@@ -3,7 +3,10 @@ package branch.alixia.msapi;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.Serializable;
 import java.time.Instant;
+import java.util.LinkedList;
+import java.util.List;
 
 import branch.alixia.msapi.tools.MSSTringProperty;
 import branch.alixia.msapi.tools.MindsetObjectProperty;
@@ -11,6 +14,62 @@ import branch.alixia.msapi.tools.PropertyVerifier;
 import javafx.beans.property.ObjectProperty;
 
 public class Construct extends MindsetObject {
+
+	public enum ClassBase {
+		MAJOR, MINOR, ELEVATED_TITAN, HONORARY_TITAN, PROPER_TITAN, MECHANICAL, PERSONALITY, BIG_DADDY;
+	}
+
+	public final static class Class implements Serializable {
+
+		private final double gradientFraction;
+		private final ClassBase[] classes;
+
+		public double getGradientFraction() {
+			return gradientFraction;
+		}
+
+		public List<ClassBase> getClasses() {
+			LinkedList<ClassBase> classes = new LinkedList<>();
+			for (ClassBase cb : this.classes)
+				classes.add(cb);
+			return classes;
+		}
+
+		private Class(ClassBase... classes) {
+			this.classes = classes;
+			gradientFraction = -1;
+		}
+
+		private Class(double gradient) {
+			gradientFraction = gradient;
+			classes = new ClassBase[] { ClassBase.MECHANICAL, ClassBase.PERSONALITY };
+		}
+
+		public static final Class getPersonalityAndMechanical(double fraction) {
+			return new Class(fraction);
+		}
+
+		public static final Class getMinorClass() {
+			return new Class(ClassBase.MINOR);
+		}
+
+		public static final Class getBigDaddyClass() {
+			return new Class(ClassBase.BIG_DADDY);
+		}
+
+		public static final Class getClass(boolean elevated, boolean honorary) {
+			return elevated
+					? honorary ? new Class(ClassBase.ELEVATED_TITAN, ClassBase.HONORARY_TITAN, ClassBase.MAJOR)
+							: new Class(ClassBase.ELEVATED_TITAN, ClassBase.MAJOR)
+					: honorary ? new Class(ClassBase.HONORARY_TITAN, ClassBase.MAJOR) : new Class(ClassBase.MAJOR);
+		}
+
+		/**
+		 * SUID
+		 */
+		private static final long serialVersionUID = 1L;
+
+	}
 
 	/**
 	 * SUID
