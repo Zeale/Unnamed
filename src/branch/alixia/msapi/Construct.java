@@ -5,7 +5,8 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import branch.alixia.msapi.tools.MSSTringProperty;
@@ -15,53 +16,57 @@ import javafx.beans.property.ObjectProperty;
 
 public class Construct extends MindsetObject {
 
-	public enum ClassBase {
+	public enum Class {
 		MAJOR, MINOR, ELEVATED_TITAN, HONORARY_TITAN, PROPER_TITAN, MECHANICAL, PERSONALITY, BIG_DADDY;
 	}
 
-	public final static class Class implements Serializable {
+	public final static class ClassData implements Serializable {
 
 		private final double gradientFraction;
-		private final ClassBase[] classes;
+		private final List<Class> classes = new ArrayList<>();
 
 		public double getGradientFraction() {
 			return gradientFraction;
 		}
 
-		public List<ClassBase> getClasses() {
-			LinkedList<ClassBase> classes = new LinkedList<>();
-			for (ClassBase cb : this.classes)
-				classes.add(cb);
-			return classes;
+		public List<Class> getClasses() {
+			return Collections.unmodifiableList(classes);
 		}
 
-		private Class(ClassBase... classes) {
-			this.classes = classes;
+		private ClassData(Class... classes) {
+			for (Class c : classes)
+				if (!this.classes.contains(c))
+					this.classes.add(c);
 			gradientFraction = -1;
 		}
 
-		private Class(double gradient) {
+		private ClassData(double gradient) {
 			gradientFraction = gradient;
-			classes = new ClassBase[] { ClassBase.MECHANICAL, ClassBase.PERSONALITY };
+			classes.add(Class.MECHANICAL);
+			classes.add(Class.PERSONALITY);
 		}
 
-		public static final Class getPersonalityAndMechanical(double fraction) {
-			return new Class(fraction);
+		public static final ClassData getPersonalityAndMechanical(double fraction) {
+			return new ClassData(fraction);
 		}
 
-		public static final Class getMinorClass() {
-			return new Class(ClassBase.MINOR);
+		public static final ClassData getMinorClass() {
+			return new ClassData(Class.MINOR);
 		}
 
-		public static final Class getBigDaddyClass() {
-			return new Class(ClassBase.BIG_DADDY);
+		public static final ClassData getBigDaddyClass() {
+			return new ClassData(Class.BIG_DADDY);
 		}
 
-		public static final Class getClass(boolean elevated, boolean honorary) {
+		public static final ClassData getClass(boolean elevated, boolean honorary) {
 			return elevated
-					? honorary ? new Class(ClassBase.ELEVATED_TITAN, ClassBase.HONORARY_TITAN, ClassBase.MAJOR)
-							: new Class(ClassBase.ELEVATED_TITAN, ClassBase.MAJOR)
-					: honorary ? new Class(ClassBase.HONORARY_TITAN, ClassBase.MAJOR) : new Class(ClassBase.MAJOR);
+					? honorary ? new ClassData(Class.ELEVATED_TITAN, Class.HONORARY_TITAN, Class.MAJOR)
+							: new ClassData(Class.ELEVATED_TITAN, Class.MAJOR)
+					: honorary ? new ClassData(Class.HONORARY_TITAN, Class.MAJOR) : new ClassData(Class.MAJOR);
+		}
+
+		public static final ClassData getDefaultClass() {
+			return new ClassData(Class.MAJOR);
 		}
 
 		/**

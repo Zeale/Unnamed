@@ -146,9 +146,12 @@ public class ConstructWindowImpl extends UWindowBase {
 		CONSTRUCT_LIST.remove(construct);
 	}
 
-	private @FXML TableView<Construct> constructs = null;
-	private @FXML TableColumn<Construct, String> name = null, description = null;
-	private @FXML TableColumn<Construct, Instant> birthday = null;
+	private @FXML TableView<Construct> constructs;
+	private @FXML TableColumn<Construct, String> name, description;
+	private @FXML TableColumn<Construct, Instant> birthday;
+	private @FXML TableColumn<Construct, Construct.ClassData> classData;
+	private @FXML TableColumn<Construct, Construct.Class> classes;
+	private @FXML TableColumn<Construct, Double> gradientValue;
 
 	private final ScrollPane centerWrapper = new ScrollPane();
 
@@ -177,7 +180,6 @@ public class ConstructWindowImpl extends UWindowBase {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	{
