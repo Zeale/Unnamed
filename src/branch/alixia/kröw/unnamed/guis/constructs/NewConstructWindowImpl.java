@@ -7,6 +7,7 @@ import java.time.ZoneId;
 import branch.alixia.guis.UWindowBase;
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.msapi.Construct;
+import branch.alixia.msapi.Construct.ClassData;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -24,14 +25,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -120,6 +115,16 @@ class NewConstructWindowImpl extends UWindowBase {
 				Instant time = date == null ? null : date.atStartOfDay(ZoneId.systemDefault()).toInstant();
 
 				Construct construct = new Construct(name, description, time);
+
+				// Sets classes properly.
+				ClassData classData = minor.isSelected() ? ClassData.getMinorClass()
+						: honoraryTitan.isSelected() || elevatedTitan.isSelected()
+								? ClassData.getClass(elevatedTitan.isSelected(), honoraryTitan.isSelected())
+								: perMech.isSelected()
+										? ClassData.getPersonalityAndMechanical(perMechDegrees.getValue())
+										: properTitan.isSelected() ? ClassData.getProperTitanClass()
+												: ClassData.getDefaultClass();
+				construct.setClassData(classData);
 
 				if (!owner.addConstruct(construct)) {
 					owner.showDialog("This construct already exists!", "Duplicate Construct error", "Dupe Construct");

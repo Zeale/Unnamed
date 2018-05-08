@@ -78,6 +78,10 @@ public class Construct extends MindsetObject {
 		 */
 		private static final long serialVersionUID = 1L;
 
+		public static ClassData getProperTitanClass() {
+			return new ClassData(Class.PROPER_TITAN);
+		}
+
 	}
 
 	/**
