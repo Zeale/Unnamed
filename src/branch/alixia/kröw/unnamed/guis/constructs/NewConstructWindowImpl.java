@@ -9,6 +9,7 @@ import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.msapi.Construct;
 import branch.alixia.msapi.Construct.ClassData;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -185,8 +186,24 @@ class NewConstructWindowImpl extends UWindowBase {
 
 		// If the major is not selected, disable the classes that can only be selected
 		// if major is selected.
-		major.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue,
-				newValue) -> setDisable(!newValue, properTitan, elevatedTitan, honoraryTitan, perMech));
+		major.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if (!(properTitan.isSelected() || elevatedTitan.isSelected() || honoraryTitan.isSelected()
+						|| perMech.isSelected()))
+					setDisable(!newValue, properTitan, elevatedTitan, honoraryTitan, perMech);
+			}
+		});
+		minor.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+			if (newValue)
+				setDisable(true, properTitan, elevatedTitan, honoraryTitan, perMech, perMechDegrees);
+			else if (properTitan.isSelected())
+				properTitan.setDisable(false);
+			else if (perMech.isSelected())
+				setDisable(false, perMech, perMechDegrees);
+			else if (honoraryTitan.isSelected() || elevatedTitan.isSelected())
+				setDisable(false, honoraryTitan, elevatedTitan);
+		});
 
 		properTitan.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue,
 				newValue) -> setDisable(newValue, elevatedTitan, honoraryTitan, perMech));
