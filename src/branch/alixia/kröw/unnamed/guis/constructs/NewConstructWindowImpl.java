@@ -97,7 +97,12 @@ class NewConstructWindowImpl extends UWindowBase {
 				Instant time = date == null ? null : date.atStartOfDay(ZoneId.systemDefault()).toInstant();
 
 				Construct construct = new Construct(name, description, time);
-				owner.addConstruct(construct);
+
+				if (!owner.addConstruct(construct)) {
+					owner.showDialog("This construct already exists!", "Duplicate Construct error", "Dupe Construct");
+					return;
+				}
+
 				stage.close();
 			}
 		});

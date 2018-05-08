@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -97,7 +96,9 @@ public class ConstructWindowImpl extends UWindowBase {
 		}
 	}
 
-	public void addConstruct(Construct construct) {
+	public boolean addConstruct(Construct construct) {
+		if (CONSTRUCT_LIST.contains(construct))
+			return false;
 		CONSTRUCT_LIST.add(construct);
 		if (!isSaveAvailable())
 			notifySaveUnavailable();
@@ -110,7 +111,7 @@ public class ConstructWindowImpl extends UWindowBase {
 						"Failed to save the construct. (The construct will still exist inside the program so you can save it to a custom location).",
 						"Failed to Save Construct", "Save Failure");
 			}
-
+		return true;
 	}
 
 	private void saveConstruct(Construct construct) throws IOException {
@@ -126,7 +127,7 @@ public class ConstructWindowImpl extends UWindowBase {
 		}
 	}
 
-	private final void showDialog(String content, String header, String title) {
+	public final void showDialog(String content, String header, String title) {
 		Dialog<Void> notification = new Dialog<>();
 		notification.initOwner(getScene().getWindow());
 		notification.setContentText(content);
