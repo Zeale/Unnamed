@@ -4,17 +4,23 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import branch.alixia.msapi.tools.MSSTringProperty;
+import branch.alixia.msapi.tools.MindsetObjectProperty;
 import branch.alixia.msapi.tools.PropertyVerifier;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
 public abstract class MindsetObject implements Externalizable {
 
+	private static final long CLASS_VERSION = 1L;
+
 	protected final MSSTringProperty name = new MSSTringProperty("Unnamed");
 	protected final ReadOnlyObjectWrapper<UUID> uniqueID = new ReadOnlyObjectWrapper<UUID>(UUID.randomUUID());
-	private static final long CLASS_VERSION = 1L;
+	protected final MindsetObjectProperty<List<Object>> otherIdentifiers = new MindsetObjectProperty<List<Object>>(
+			new ArrayList<>());
 
 	{
 		PropertyVerifier.attachStringVerifier(name);
@@ -27,8 +33,10 @@ public abstract class MindsetObject implements Externalizable {
 
 		out.writeObject(uniqueID.get());
 		out.writeObject(name);
+		out.writeObject(otherIdentifiers);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
@@ -38,6 +46,7 @@ public abstract class MindsetObject implements Externalizable {
 		try {
 			uniqueID.set((UUID) in.readObject());
 			name.set(in.readUTF());
+			otherIdentifiers.set((List<Object>) in.readObject());
 		} catch (Exception e) {
 		}
 	}
