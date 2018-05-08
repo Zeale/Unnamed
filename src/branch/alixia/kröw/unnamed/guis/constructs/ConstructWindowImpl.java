@@ -314,6 +314,8 @@ public class ConstructWindowImpl extends UWindowBase {
 			newWindow.initOwner(getScene().getWindow());
 			newWindow.setAlwaysOnTop(true);
 		}
+		if (newWindow.isShowing())
+			return;
 		newWindow.setScene(new Scene(new NewConstructWindowImpl(this, newWindow), Color.TRANSPARENT));
 		newWindow.show();
 	}
@@ -342,9 +344,12 @@ public class ConstructWindowImpl extends UWindowBase {
 		protected void updateItem(Construct item, boolean empty) {
 			super.updateItem(item, empty);
 
-			setBackground(FXTools.getBackgroundFromColor(
-					item == null || empty ? ((getIndex() & 1) == 0 ? Color.BLACK.interpolate(Color.TRANSPARENT, 0.865)
-							: Color.BLACK.interpolate(Color.TRANSPARENT, 0.7)) : Color.GRAY));
+			setBackground(
+					FXTools.getBackgroundFromColor(
+							item == null || empty
+									? ((getIndex() & 1) == 0 ? Color.BLACK.interpolate(Color.TRANSPARENT, 0.865)
+											: Color.BLACK.interpolate(Color.TRANSPARENT, 0.7))
+									: new Color(0.4, 0.4, 0.4, 1)));
 
 		}
 	}
