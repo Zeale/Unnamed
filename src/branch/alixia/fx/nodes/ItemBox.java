@@ -16,6 +16,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
@@ -136,7 +137,10 @@ public class ItemBox extends ScrollPane {
 				animation.play();
 			});
 
-			wrapper.setOnMouseClicked(event -> activate());
+			wrapper.setOnMouseClicked(event -> {
+				if (event.getButton() == MouseButton.PRIMARY)
+					activate();
+			});
 
 			setBorderColor(Color.BLACK);
 
