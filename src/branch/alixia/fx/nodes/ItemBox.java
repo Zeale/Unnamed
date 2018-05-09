@@ -101,6 +101,7 @@ public class ItemBox extends ScrollPane {
 
 		private final Text nameText = new Text();
 		private final VBox wrapper = new VBox(15, this, nameText);
+
 		{
 
 			prefWidthProperty().bind(itemSize);
@@ -236,6 +237,7 @@ public class ItemBox extends ScrollPane {
 		center.setPrefWidth(1000);
 		center.setMinSize(400, 400);
 		center.setPadding(new Insets(90, 80, 0, 80));
+		center.setAlignment(Pos.CENTER);
 	}
 
 }
