@@ -2,6 +2,7 @@ package branch.alixia.unnamed;
 
 import branch.alixia.Images;
 import branch.alixia.guis.HomeWindowBase;
+import javafx.scene.paint.Color;
 
 final class HomeWindow extends HomeWindowBase {
 	{
@@ -41,5 +42,20 @@ final class HomeWindow extends HomeWindowBase {
 
 			}
 		};
+
+		new Item("Updates") {
+
+			{
+				addImage(Images.GRAPHICS_LOCATION + "Updates Icon-1024px.png");
+				setTextToColor(Color.RED);
+			}
+
+			@Override
+			protected void activate() {
+				// TODO Auto-generated method stub
+			}
+
+		};
+
 	}
 }
