@@ -73,25 +73,35 @@ public class ItemBox extends ScrollPane {
 
 		private final class ItemAnimation extends Transition {
 
-			private Color fromValue = DEFAULT_ITEM_COLOR, toValue = DEFAULT_ITEM_COLOR;
+			private Color fromBorderColor = Color.BLACK, toBorderColor = Color.BLACK;
+			private Color fromTextColor = Color.BLACK, toTextColor = DEFAULT_ITEM_COLOR;
 
 			{
 				setCycleDuration(Duration.seconds(0.6));
 			}
 
-			public void setFromValue(Color fromValue) {
-				this.fromValue = fromValue;
+			public void setFromBorderColor(Color fromValue) {
+				this.fromBorderColor = fromValue;
 			}
 
-			public void setToValue(Color toValue) {
-				this.toValue = toValue;
+			public void setToBorderColor(Color toValue) {
+				this.toBorderColor = toValue;
+			}
+
+			public void setFromTextColor(Color fromTextColor) {
+				this.fromTextColor = fromTextColor;
+			}
+
+			public void setToTextColor(Color toTextColor) {
+				this.toTextColor = toTextColor;
 			}
 
 			@Override
 			protected void interpolate(double frac) {
-				setBorder(new Border(new BorderStroke(fromValue.interpolate(toValue, frac), BorderStrokeStyle.SOLID,
-						new CornerRadii(getWidth() / 10 * frac), new BorderWidths(DEFAULT_BORDER_WIDTH))));
-				nameText.setFill(Color.BLACK.interpolate(DEFAULT_ITEM_COLOR, frac));
+				setBorder(new Border(
+						new BorderStroke(fromBorderColor.interpolate(toBorderColor, frac), BorderStrokeStyle.SOLID,
+								new CornerRadii(getWidth() / 10 * frac), new BorderWidths(DEFAULT_BORDER_WIDTH))));
+				nameText.setFill(fromTextColor.interpolate(toTextColor, frac));
 
 			}
 
@@ -128,11 +138,10 @@ public class ItemBox extends ScrollPane {
 
 			wrapper.setOnMouseClicked(event -> activate());
 
+			setBorderColor(Color.BLACK);
+
 			// Must be called underneath wrapper's definition.
 			add();
-
-			setBorderColor(Color.BLACK);
-			setBorderToColor(Color.BLACK);
 
 		}
 
@@ -140,11 +149,20 @@ public class ItemBox extends ScrollPane {
 
 		public void setBorderColor(Color color) {
 			setBorder(FXTools.getBorderFromColor(color, DEFAULT_BORDER_WIDTH));
-			animation.setFromValue(color);
+			animation.setFromBorderColor(color);
+		}
+
+		public void setTextColor(Color color) {
+			nameText.setFill(color);
+			animation.setFromTextColor(color);
+		}
+
+		public void setTextToColor(Color color) {
+			animation.setToTextColor(color);
 		}
 
 		public void setBorderToColor(Color color) {
-			animation.setToValue(color);
+			animation.setToBorderColor(color);
 		}
 
 		public void add() {
