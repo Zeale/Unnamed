@@ -282,8 +282,6 @@ public class ConstructWindowImpl extends UWindowBase {
 
 		/*
 		 * Functional Buttons (Right Box)
-		 * 
-		 * (Testing Code)
 		 */
 
 		Text newTab = getFormattedMenuText("New");
@@ -338,7 +336,18 @@ public class ConstructWindowImpl extends UWindowBase {
 		}
 	}
 
+	private void selectConstruct(Construct construct) {
+
+	}
+
 	private class ConstructRow extends TableRow<Construct> {
+
+		{
+			setOnMouseClicked(event -> {
+				if (!isEmpty())
+					selectConstruct(getItem());
+			});
+		}
 
 		@Override
 		protected void updateItem(Construct item, boolean empty) {
