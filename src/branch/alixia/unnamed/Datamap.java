@@ -34,7 +34,9 @@ public class Datamap extends HashMap<String, String> {
 		try (Scanner scanner = new Scanner(inputStream)) {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
-				if (!line.contains("="))
+				if (line.isEmpty() || line.startsWith("//"))
+					continue;
+				else if (!line.contains("="))
 					throw new RuntimeException("Couldn't find a key value pair for a line.");
 				String[] strings = line.split("=");
 				String key = strings[0], value = strings[1];
