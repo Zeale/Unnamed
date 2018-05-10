@@ -1,4 +1,4 @@
-package branch.alixia.msapi.tools;
+package branch.alixia.unnamed.msapi.tools;
 
 public class MSSTringProperty extends MindsetObjectProperty<String> {
 

@@ -1,4 +1,4 @@
-package branch.alixia.msapi;
+package branch.alixia.unnamed.msapi;
 
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import branch.alixia.msapi.tools.MSSTringProperty;
-import branch.alixia.msapi.tools.MindsetObjectProperty;
-import branch.alixia.msapi.tools.PropertyVerifier;
+import branch.alixia.unnamed.msapi.tools.MSSTringProperty;
+import branch.alixia.unnamed.msapi.tools.MindsetObjectProperty;
+import branch.alixia.unnamed.msapi.tools.PropertyVerifier;
 import javafx.beans.property.ObjectProperty;
 
 public class Construct extends MindsetObject {

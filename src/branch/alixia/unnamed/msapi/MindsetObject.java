@@ -1,4 +1,4 @@
-package branch.alixia.msapi;
+package branch.alixia.unnamed.msapi;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import branch.alixia.msapi.tools.MSSTringProperty;
-import branch.alixia.msapi.tools.MindsetObjectProperty;
-import branch.alixia.msapi.tools.PropertyVerifier;
+import branch.alixia.unnamed.msapi.tools.MSSTringProperty;
+import branch.alixia.unnamed.msapi.tools.MindsetObjectProperty;
+import branch.alixia.unnamed.msapi.tools.PropertyVerifier;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
 public abstract class MindsetObject implements Externalizable {

@@ -1,8 +1,7 @@
 package branch.alixia.unnamed;
 
-import branch.alixia.Images;
-import branch.alixia.guis.HomeWindowBase;
 import branch.alixia.kröw.unnamed.guis.updater.UpdateWindowImpl;
+import branch.alixia.unnamed.guis.HomeWindowBase;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 
