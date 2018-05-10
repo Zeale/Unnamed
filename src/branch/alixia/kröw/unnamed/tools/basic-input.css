@@ -1,0 +1,20 @@
+.basic-input .scroll-pane, .basic-input .scroll-pane .content, .basic-input .scroll-pane .viewport, .basic-input.progress-bar .track, .basic-input.progress-bar .track .bar {
+	-fx-background-color: transparent;
+}
+
+/*
+ * Sets the color of the progress item itself.
+ */
+.basic-input.progress-bar * {
+	-fx-background-color: red;
+}
+
+.basic-input {
+	-fx-font-family: Consolas;
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+}
+
+.basic-input.text-field {
+	-fx-font-weight: normal;
+}

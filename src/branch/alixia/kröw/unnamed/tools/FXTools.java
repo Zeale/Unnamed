@@ -11,6 +11,7 @@ import javafx.animation.SequentialTransition;
 import javafx.animation.Transition;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -71,13 +72,16 @@ public final class FXTools {
 		for (Region r : inputs) {
 			r.setBackground(getBackgroundFromColor(Unnamed.DEFAULT_WINDOW_COLOR.interpolate(Color.BLACK, 0.25)));
 			r.setBorder(getBorderFromColor(Unnamed.ITEM_BORDER_COLOR));
-			r.getStylesheets().add("branch/alixia/kröw/unnamed/tools/basicInputStyleStylesheet.css");
+			r.getStylesheets().add("branch/alixia/kröw/unnamed/tools/basic-input.css");
 			r.getStyleClass().add("basic-input");
 
 			final Color toColor = r instanceof Button ? RED : GREEN;
 			(r instanceof Button ? ((Button) r).armedProperty() : r.focusedProperty())
 					.addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> r
 							.setBorder(getBorderFromColor(newValue ? toColor : Unnamed.ITEM_BORDER_COLOR)));
+
+			if (r instanceof ProgressBar) {
+			}
 		}
 	}
 

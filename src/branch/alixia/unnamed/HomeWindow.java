@@ -2,6 +2,8 @@ package branch.alixia.unnamed;
 
 import branch.alixia.Images;
 import branch.alixia.guis.HomeWindowBase;
+import branch.alixia.kröw.unnamed.guis.updater.UpdateWindowImpl;
+import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 
 final class HomeWindow extends HomeWindowBase {
@@ -52,7 +54,7 @@ final class HomeWindow extends HomeWindowBase {
 
 			@Override
 			protected void activate() {
-				// TODO Auto-generated method stub
+				MSGUIs.setScene(new Scene(new UpdateWindowImpl(true), Color.TRANSPARENT));
 			}
 
 		};
