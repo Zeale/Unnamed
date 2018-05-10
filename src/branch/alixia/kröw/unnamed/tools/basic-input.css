@@ -6,7 +6,7 @@
  * Sets the color of the progress item itself.
  */
 .basic-input.progress-bar * {
-	-fx-background-color: red;
+	-fx-background-color: white;
 }
 
 .basic-input {
