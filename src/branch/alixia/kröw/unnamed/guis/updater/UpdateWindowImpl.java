@@ -10,6 +10,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -29,7 +30,6 @@ public class UpdateWindowImpl extends UWindowBase {
 
 			final URL url = new URL("http://dusttoash.org/Unnamed/latest/version");
 			int code = ((HttpURLConnection) (url.openConnection())).getResponseCode();
-			System.out.println(code);
 			if (code != 200) {
 				status.setFill(Color.RED);
 				status.setText("Failed to grab update information... HTTP Response code: " + code);
@@ -56,15 +56,10 @@ public class UpdateWindowImpl extends UWindowBase {
 	/*
 	 * Actual Screen
 	 */
-	private final AnchorPane updateWindow = new AnchorPane();
+	private final VBox versions = new VBox();
+	private final VBox selectedVersion = new VBox(40);
 
 	{
-		/*
-		 * Initialization
-		 */
-
-		setCenter(updateWindow);
-
 		/*
 		 * Child Initialization
 		 */
@@ -73,9 +68,18 @@ public class UpdateWindowImpl extends UWindowBase {
 		wrapper.setFillWidth(false);
 		updateCheckerProgress.setPrefWidth(400);
 		FXTools.styleBasicInput(updateCheckerProgress, continueButton);
-		continueButton.setOnAction(event -> setCenter(updateWindow));
+		continueButton.setOnAction(event -> {
+			setCenter(null);
+			setLeft(versions);
+			setRight(selectedVersion);
+		});
 
 		status.setFont(Font.font(28));
+
+		selectedVersion.setFillWidth(false);
+		selectedVersion.setAlignment(Pos.CENTER);
+		selectedVersion.setPrefWidth(800);
+
 	}
 
 }
