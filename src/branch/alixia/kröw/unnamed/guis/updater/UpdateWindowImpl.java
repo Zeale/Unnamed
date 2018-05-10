@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import branch.alixia.kröw.unnamed.tools.FXTools;
+import branch.alixia.unnamed.Datamap;
 import branch.alixia.unnamed.guis.UWindowBase;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -49,6 +50,21 @@ public class UpdateWindowImpl extends UWindowBase {
 
 				if (code == 200) {
 					// Get the map of urls for this version.
+					Datamap map = Datamap.read(connection.getInputStream());
+
+					if (!map.containsKey("download-location")) {
+						Platform.runLater(() -> {
+							status.setFill(Color.RED);
+							status.setText("Failed to obtain the download location of the update...");
+						});
+					} else if (!map.containsKey("donwload-info")) {
+						Platform.runLater(() -> {
+							status.setFill(Color.RED);
+							status.setText("Failed to obtain the version of the update.");
+						});
+					} else {
+						// Add latest update to list.
+					}
 				}
 
 			} catch (IOException e) {
