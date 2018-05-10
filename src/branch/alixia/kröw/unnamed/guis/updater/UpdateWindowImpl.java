@@ -1,9 +1,19 @@
 package branch.alixia.kröw.unnamed.guis.updater;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import branch.alixia.guis.UWindowBase;
 import branch.alixia.kröw.unnamed.tools.FXTools;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 public class UpdateWindowImpl extends UWindowBase {
 
@@ -13,14 +23,35 @@ public class UpdateWindowImpl extends UWindowBase {
 	}
 
 	public void checkForUpdates() {
-		setCenter(loadingScreen);
+		setCenter(wrapper);
+		status.setText("Attempting to connect to update repository...");
+		try {
+
+			final URL url = new URL("http://dusttoash.org/Unnamed/latest/version");
+			int code = ((HttpURLConnection) (url.openConnection())).getResponseCode();
+			System.out.println(code);
+			if (code != 200) {
+				status.setFill(Color.RED);
+				status.setText("Failed to grab update information... HTTP Response code: " + code);
+			} else {
+				updateCheckerProgress.setProgress(1);
+				status.setFill(Color.GREEN);
+				status.setText("Successfully grabbed update information!");
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*
 	 * Loading Screen
 	 */
 	private final ProgressBar updateCheckerProgress = new ProgressBar(0);
-	private final AnchorPane loadingScreen = new AnchorPane(updateCheckerProgress);
+	private final Text status = new Text();
+	private final Button continueButton = new Button("Continue");
+
+	private final VBox wrapper = new VBox(40, updateCheckerProgress, status, continueButton);
 
 	/*
 	 * Actual Screen
@@ -38,11 +69,13 @@ public class UpdateWindowImpl extends UWindowBase {
 		 * Child Initialization
 		 */
 
-		AnchorPane.setBottomAnchor(updateCheckerProgress, 400d);
-		AnchorPane.setLeftAnchor(updateCheckerProgress, 80d);
-		AnchorPane.setRightAnchor(updateCheckerProgress, 80d);
+		wrapper.setAlignment(Pos.CENTER);
+		wrapper.setFillWidth(false);
+		updateCheckerProgress.setPrefWidth(400);
+		FXTools.styleBasicInput(updateCheckerProgress, continueButton);
+		continueButton.setOnAction(event -> setCenter(updateWindow));
 
-		FXTools.styleBasicInput(updateCheckerProgress);
+		status.setFont(Font.font(28));
 	}
 
 }
