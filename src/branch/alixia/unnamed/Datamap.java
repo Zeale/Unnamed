@@ -9,6 +9,7 @@ import java.util.Scanner;
 public class Datamap extends HashMap<String, String> {
 
 	@Override
+	// TODO Trim output.
 	public String put(String key, String value) {
 		String lineSeparator = System.getProperty("line.separator");
 		if (key.contains("=") || key.contains(lineSeparator) || value.contains(lineSeparator))
@@ -27,6 +28,7 @@ public class Datamap extends HashMap<String, String> {
 			writer.println(e.getKey() + "=" + e.getValue());
 	}
 
+	// TODO Trim read input.
 	public static Datamap read(InputStream inputStream) {
 
 		Datamap map = new Datamap();
