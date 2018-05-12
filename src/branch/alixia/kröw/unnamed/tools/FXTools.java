@@ -11,7 +11,6 @@ import javafx.animation.SequentialTransition;
 import javafx.animation.Transition;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.Button;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -80,8 +79,6 @@ public final class FXTools {
 					.addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> r
 							.setBorder(getBorderFromColor(newValue ? toColor : Unnamed.ITEM_BORDER_COLOR)));
 
-			if (r instanceof ProgressBar) {
-			}
 		}
 	}
 
