@@ -1,6 +1,10 @@
 package branch.alixia.kröw.unnamed.guis.updater;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.LinkedList;
@@ -8,8 +12,12 @@ import java.util.List;
 
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.unnamed.Datamap;
+import branch.alixia.unnamed.Images;
+import branch.alixia.unnamed.Unnamed;
 import branch.alixia.unnamed.guis.UWindowBase;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -30,6 +38,13 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class UpdateWindowImpl extends UWindowBase {
+
+	private final static File UPDATE_DOWNLOADS_ROOT = new File(Unnamed.PROGRAM_ROOT, "Updates");
+	private final static File LATEST_UPDATE = new File(UPDATE_DOWNLOADS_ROOT, "Latest.jar");
+
+	static {
+		UPDATE_DOWNLOADS_ROOT.mkdirs();
+	}
 
 	public UpdateWindowImpl(boolean checkForUpdates) {
 		if (checkForUpdates)
@@ -111,7 +126,8 @@ public class UpdateWindowImpl extends UWindowBase {
 		private final ImageView icon = new ImageView();
 		private final Text name = new Text(), description = new Text();
 		private final Button download = new Button("Download");
-		private final VBox content = new VBox(20, icon, name, description, download);
+		private final ProgressBar downloadProgress = new ProgressBar(0);
+		private final VBox content = new VBox(20, icon, name, description, download, downloadProgress);
 
 		private final ImageView backgroundScreenshot1 = new ImageView(), backgroundScreenshot2 = new ImageView();
 		private final List<ImageView> screenshots = new LinkedList<>();
@@ -120,9 +136,7 @@ public class UpdateWindowImpl extends UWindowBase {
 
 		private final URL downloadLocation;
 
-		private boolean downloading;
-
-		// TODO Add a transition that shows screenshots as the background or something.
+		private boolean blockDownload;
 
 		{
 			wrapper.setAlignment(Pos.CENTER);
@@ -132,14 +146,19 @@ public class UpdateWindowImpl extends UWindowBase {
 			FXTools.styleBasicInput(view, download);
 
 			icon.imageProperty().bindBidirectional(listingIcon.imageProperty());
-			listingIcon.fitHeightProperty().bind(listingIconWrapper.heightProperty());
-			listingIcon.fitWidthProperty().bind(listingIconWrapper.widthProperty());
+
+			icon.setFitHeight(128);
+			icon.setFitWidth(128);
+
+			listingIcon.setFitHeight(64);
+			listingIcon.setFitWidth(64);
+
 			contentName.setFont(Font.font(20));
 			contentName.setFill(Color.WHITE);
 			contentName.textProperty().bindBidirectional(name.textProperty());
 
 			description.setFont(Font.font(16));
-			description.setFill(Color.WHITE);
+			description.setFill(Color.BLACK);
 
 			styleText(name);
 
@@ -163,19 +182,26 @@ public class UpdateWindowImpl extends UWindowBase {
 			download.setFont(Font.font("Consolas", FontWeight.BOLD, -1));
 			download.setTextFill(Color.WHITE);
 
-			view.setOnAction(event -> setCenter(contentPane));
-			download.setOnAction(event -> {
-				if (downloading)
-					return;
-				download.setText("Downloading...");
-				download.setTextFill(Color.GREEN);
+			downloadProgress.setVisible(false);
 
-				try {
-					downloading = true;
-					// TODO Attempt to download
-				} catch (Exception e) {
+			view.setOnAction(event -> setCenter(contentPane));
+			download.setOnAction(new EventHandler<ActionEvent>() {
+
+				private void handleException(Exception e) {
+
+					// Download unsuccessful
+
+					// Run on FX thread.
+					if (!Platform.isFxApplicationThread()) {
+						Platform.runLater(() -> handleException(e));
+						return;
+					}
+
+					downloadProgress.setVisible(false);
+
 					download.setText("Download failed");
 					download.setTextFill(Color.RED);
+					// This may have an issue if the user clicks download multiple times.
 					new Thread(() -> {
 						try {
 							Thread.sleep(3000);
@@ -185,13 +211,85 @@ public class UpdateWindowImpl extends UWindowBase {
 						Platform.runLater(() -> {
 							download.setText("Download");
 							download.setTextFill(Color.WHITE);
+							blockDownload = false;
 						});
 					}).start();
+					e.printStackTrace();
 
+				}
+
+				@Override
+				public void handle(ActionEvent event) {
+					if (blockDownload)
+						return;
+					blockDownload = true;
+					download.setText("Downloading...");
+					download.setTextFill(Color.GREEN);
+					downloadProgress.setVisible(true);
+
+					try {
+						downloadProgress.setProgress(0.04);
+						HttpURLConnection connection = (HttpURLConnection) downloadLocation.openConnection();
+						int responseCode = connection.getResponseCode();
+						if (responseCode == 404)
+							throw new FileNotFoundException(
+									"The download file could not be found on the remote server.");
+						else if (responseCode != 200)
+							throw new RuntimeException("HTTP Response Code was not 200. It was " + responseCode + ".");
+						downloadProgress.setProgress(0.1);
+
+						InputStream input = connection.getInputStream();
+						FileOutputStream output = new FileOutputStream(LATEST_UPDATE);
+
+						new Thread(() -> {
+							try {
+								int bufferLength = 1024;
+								double currentProgress = downloadProgress.getProgress();
+								long totalReadData = 0;
+
+								byte[] buffer = new byte[bufferLength];
+								int amount;
+								while ((amount = input.read(buffer)) != -1) {
+									totalReadData += amount;
+									output.write(buffer, 0, amount);
+									downloadProgress.setProgress(currentProgress
+											+ connection.getContentLength() / totalReadData * (1 - currentProgress));
+								}
+								output.close();
+
+								downloadProgress.setVisible(false);
+
+								// Download successful
+
+								Platform.runLater(() -> {
+									download.setText("Success!");
+									download.setTextFill(Color.BLUE);
+									new Thread(() -> {
+										try {
+											Thread.sleep(2000);
+										} catch (InterruptedException e1) {
+											e1.printStackTrace();
+										}
+										Platform.runLater(() -> {
+											download.setText("Download");
+											download.setTextFill(Color.WHITE);
+											blockDownload = false;
+										});
+									}).start();
+								});
+
+							} catch (Exception e2) {
+								handleException(e2);
+							}
+						}).start();
+
+					} catch (Exception e) {
+						handleException(e);
+					}
 				}
 			});
 
-			wrapper.setPadding(new Insets(5, 5, 10, 5));
+			wrapper.setPadding(new Insets(5, 20, 10, 5));
 			listing.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null,
 					new BorderWidths(0, 0, FXTools.COMMON_BORDER_WIDTH, 0))));
 
@@ -218,7 +316,7 @@ public class UpdateWindowImpl extends UWindowBase {
 				if (!downloadInfo.containsKey("version-description"))
 					description.setFill(Color.RED);
 				description.setText(downloadInfo.getOrDefault("version-description", "Missing Description"));
-
+				Images.loadImageInBackground(icon, new URL(downloadInfo.get("version-icon")));
 			}
 		}
 	}
