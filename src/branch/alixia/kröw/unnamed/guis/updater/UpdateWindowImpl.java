@@ -9,20 +9,27 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.unnamed.Datamap;
 import branch.alixia.unnamed.Images;
 import branch.alixia.unnamed.Unnamed;
 import branch.alixia.unnamed.guis.UWindowBase;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Border;
@@ -36,6 +43,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 public class UpdateWindowImpl extends UWindowBase {
 
@@ -52,6 +60,7 @@ public class UpdateWindowImpl extends UWindowBase {
 	}
 
 	public void checkForUpdates() {
+		setMinSize(1206, 726);
 		setCenter(wrapper);
 		status.setText("Attempting to connect to update repository...");
 
@@ -117,6 +126,8 @@ public class UpdateWindowImpl extends UWindowBase {
 
 	private final class Version {
 
+		private int backgroundAnimationIterator = 1;
+
 		private final ImageView listingIcon = new ImageView();
 		private final StackPane listingIconWrapper = new StackPane(listingIcon);
 		private final Text contentName = new Text();
@@ -130,15 +141,79 @@ public class UpdateWindowImpl extends UWindowBase {
 		private final VBox content = new VBox(20, icon, name, description, download, downloadProgress);
 
 		private final ImageView backgroundScreenshot1 = new ImageView(), backgroundScreenshot2 = new ImageView();
-		private final List<ImageView> screenshots = new LinkedList<>();
 
-		private final AnchorPane listing = new AnchorPane(wrapper), contentPane = new AnchorPane(content);
+		private final List<Image> screenshots = new LinkedList<>();
+
+		// This assumes that
+		private final Timeline backgroundAnimator = new Timeline();
+		{
+			double maxOpacity = 0.4;
+			backgroundAnimator.getKeyFrames().addAll(
+					new KeyFrame(Duration.ZERO, new KeyValue(backgroundScreenshot1.opacityProperty(), maxOpacity),
+							new KeyValue(backgroundScreenshot2.opacityProperty(), 0)),
+					new KeyFrame(Duration.seconds(3), new EventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent event) {
+							// Make sure that there are still enough images for the animation to proceed.
+							if (screenshots.size() < 2)
+								backgroundAnimator.pause();
+							// BG1 just faded out. Change its image.
+
+							// Set the iterator to point to the next screenshot.
+							if (++backgroundAnimationIterator == screenshots.size())
+								backgroundAnimationIterator = 0;
+							// Set the faded out, BG1's image to be the determined, next image.
+							backgroundScreenshot1.setImage(screenshots.get(backgroundAnimationIterator));
+						}
+					}, new KeyValue(backgroundScreenshot1.opacityProperty(), 0),
+							new KeyValue(backgroundScreenshot2.opacityProperty(), maxOpacity)),
+					new KeyFrame(Duration.seconds(6), new KeyValue(backgroundScreenshot1.opacityProperty(), 0),
+							new KeyValue(backgroundScreenshot2.opacityProperty(), maxOpacity)),
+					new KeyFrame(Duration.seconds(9), event -> {
+
+						if (screenshots.size() < 2)
+							backgroundAnimator.pause();
+
+						if (++backgroundAnimationIterator == screenshots.size())
+							backgroundAnimationIterator = 0;
+						backgroundScreenshot2.setImage(screenshots.get(backgroundAnimationIterator));
+
+					}, new KeyValue(backgroundScreenshot1.opacityProperty(), maxOpacity),
+							new KeyValue(backgroundScreenshot2.opacityProperty(), 0)),
+					new KeyFrame(Duration.seconds(12),
+							new KeyValue(backgroundScreenshot1.opacityProperty(), maxOpacity),
+							new KeyValue(backgroundScreenshot2.opacityProperty(), 0)));
+			backgroundAnimator.setCycleCount(Animation.INDEFINITE);
+		}
+
+		private final AnchorPane listing = new AnchorPane(wrapper),
+				contentPane = new AnchorPane(backgroundScreenshot1, backgroundScreenshot2, content);
 
 		private final URL downloadLocation;
 
 		private boolean blockDownload;
 
 		{
+
+			contentPane.setOnMouseClicked(new EventHandler<Event>() {
+
+				@Override
+				public void handle(Event event) {
+					System.out.println(contentPane.getWidth());
+					System.out.println(contentPane.getHeight());
+					System.out.println();
+				}
+			});
+
+			backgroundScreenshot1.setFitHeight(702);
+			backgroundScreenshot1.setFitWidth(860);
+			backgroundScreenshot2.fitHeightProperty().bind(backgroundScreenshot1.fitHeightProperty());
+			backgroundScreenshot2.fitWidthProperty().bind(backgroundScreenshot1.fitWidthProperty());
+
+			AnchorPane.setTopAnchor(content, 0d);
+			AnchorPane.setRightAnchor(content, 0d);
+			AnchorPane.setBottomAnchor(content, 0d);
+			AnchorPane.setLeftAnchor(content, 0d);
 			wrapper.setAlignment(Pos.CENTER);
 			wrapper.setSpacing(40);
 			wrapper.setFillHeight(false);
@@ -162,20 +237,6 @@ public class UpdateWindowImpl extends UWindowBase {
 
 			styleText(name);
 
-			AnchorPane.setTopAnchor(backgroundScreenshot1, 0d);
-			AnchorPane.setRightAnchor(backgroundScreenshot1, 0d);
-			AnchorPane.setBottomAnchor(backgroundScreenshot1, 0d);
-			AnchorPane.setLeftAnchor(backgroundScreenshot1, 0d);
-
-			AnchorPane.setTopAnchor(backgroundScreenshot2, 0d);
-			AnchorPane.setRightAnchor(backgroundScreenshot2, 0d);
-			AnchorPane.setBottomAnchor(backgroundScreenshot2, 0d);
-			AnchorPane.setLeftAnchor(backgroundScreenshot2, 0d);
-
-			AnchorPane.setTopAnchor(content, 0d);
-			AnchorPane.setRightAnchor(content, 0d);
-			AnchorPane.setBottomAnchor(content, 0d);
-			AnchorPane.setLeftAnchor(content, 0d);
 			content.setAlignment(Pos.CENTER);
 
 			download.getStyleClass().remove("basic-input");
@@ -185,6 +246,7 @@ public class UpdateWindowImpl extends UWindowBase {
 			downloadProgress.setVisible(false);
 
 			view.setOnAction(event -> setCenter(contentPane));
+
 			download.setOnAction(new EventHandler<ActionEvent>() {
 
 				private void handleException(Exception e) {
@@ -317,6 +379,24 @@ public class UpdateWindowImpl extends UWindowBase {
 					description.setFill(Color.RED);
 				description.setText(downloadInfo.getOrDefault("version-description", "Missing Description"));
 				Images.loadImageInBackground(icon, new URL(downloadInfo.get("version-icon")));
+
+				if (downloadInfo.containsKey("screenshots")) {
+					String locations[] = downloadInfo.get("screenshots").split(",");
+					for (String s : locations) {
+						s = s.trim();
+						Images.loadImageInBackground((BiConsumer<Image, Boolean>) (t, u) -> {
+							if (u) {
+								screenshots.add(t);
+								if (screenshots.size() == 1)
+									backgroundScreenshot1.setImage(t);
+								else if (screenshots.size() == 2) {
+									backgroundScreenshot2.setImage(t);
+									backgroundAnimator.play();
+								}
+							}
+						}, new URL(s));
+					}
+				}
 			}
 		}
 	}
@@ -326,15 +406,16 @@ public class UpdateWindowImpl extends UWindowBase {
 		 * Child Initialization
 		 */
 
-		versions.setBorder(FXTools.getBorderFromColor(Color.BLACK));
+		versionsWrapper.setBorder(FXTools.getBorderFromColor(Color.BLACK));
+		versionsWrapper.setMinWidth(200);
+		FXTools.setDefaultBackground(versionsWrapper);
 
 		wrapper.setAlignment(Pos.CENTER);
 		wrapper.setFillWidth(false);
 		updateCheckerProgress.setPrefWidth(400);
 		FXTools.styleBasicInput(updateCheckerProgress, continueButton);
 		continueButton.setOnAction(event -> {
-			setCenter(null);
-			setLeft(versions);
+			setLeft(versionsWrapper);
 			Text noVersionSelectedText = new Text("No version selected");
 			styleText(noVersionSelectedText);
 			setCenter(noVersionSelectedText);

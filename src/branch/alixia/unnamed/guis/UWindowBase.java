@@ -19,7 +19,6 @@ public class UWindowBase extends BorderPane {
 
 	{
 		topProperty().bind(menuBar);
-		setPrefSize(1206, 726);
 	}
 
 	protected static final Color DEFAULT_BORDER_COLOR = DEFAULT_WINDOW_BACKGROUND_COLOR.darker().darker();
