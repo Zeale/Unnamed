@@ -54,6 +54,12 @@ public final class Images {
 
 	}
 
+	private static boolean suppressWarnings = true;
+
+	public static void setSuppressWarnings(boolean suppressWarnings) {
+		Images.suppressWarnings = suppressWarnings;
+	}
+
 	private static Thread imageLoaderThread = new Thread(new Runnable() {
 
 		@Override
@@ -64,6 +70,8 @@ public final class Images {
 					LoadItem item = loadQueue.pop();
 					item.action.accept(new Image(item.input == null ? item.location.openStream() : item.input), true);
 				} catch (Throwable e) {
+					if (!suppressWarnings)
+						e.printStackTrace();
 				}
 			}
 			imageLoaderThread = new Thread(this);
