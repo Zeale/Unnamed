@@ -98,6 +98,11 @@ public class UpdateWindowImpl extends UWindowBase {
 							status.setFill(Color.RED);
 							status.setText("Failed to obtain the version of the update.");
 						});
+					} else if (!map.containsKey("version")) {
+						Platform.runLater(() -> {
+							status.setFill(Color.RED);
+							status.setText("Failed to determine the version ID of the update.");
+						});
 					} else {
 						new Version(map);
 					}
@@ -135,10 +140,11 @@ public class UpdateWindowImpl extends UWindowBase {
 		private final HBox wrapper = new HBox(listingIconWrapper, contentName, view);
 
 		private final ImageView icon = new ImageView();
-		private final Text name = new Text(), description = new Text();
+		private final Text name = new Text(), version = new Text(), description = new Text();
+		private final HBox nameWrap = new HBox(name, version);
 		private final Button download = new Button("Download");
 		private final ProgressBar downloadProgress = new ProgressBar(0);
-		private final VBox content = new VBox(20, icon, name, description, download, downloadProgress);
+		private final VBox content = new VBox(20, icon, nameWrap, description, download, downloadProgress);
 
 		private final ImageView backgroundScreenshot1 = new ImageView(), backgroundScreenshot2 = new ImageView();
 
@@ -372,9 +378,19 @@ public class UpdateWindowImpl extends UWindowBase {
 				name.setText("Unknown...");
 			} else {
 				Datamap downloadInfo = Datamap.read(downloadInfoLocation.openStream());
+
 				if (!downloadInfo.containsKey("version-name"))
 					name.setFill(Color.RED);
 				name.setText(downloadInfo.getOrDefault("version-name", "Unknown"));
+				Datamap map = null;
+				if (data.containsKey("version"))
+					map = data;
+				else if (downloadInfo.containsKey("version"))
+					map = downloadInfo;
+				if (map != null) {
+					// TODO Display version
+				}
+
 				if (!downloadInfo.containsKey("version-description"))
 					description.setFill(Color.RED);
 				description.setText(downloadInfo.getOrDefault("version-description", "Missing Description"));
