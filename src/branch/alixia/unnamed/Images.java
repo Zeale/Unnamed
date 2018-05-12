@@ -1,6 +1,7 @@
 package branch.alixia.unnamed;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Stack;
 import java.util.function.BiConsumer;
 
@@ -16,14 +17,32 @@ public final class Images {
 
 		private final BiConsumer<Image, Boolean> action;
 		private final InputStream input;
+		private final URL location;
+
+		private static final BiConsumer<Image, Boolean> convertViewToConsumer(ImageView view) {
+			return (t, u) -> view.setImage(t);
+		}
 
 		private LoadItem(ImageView view, InputStream inputStream) {
-			this((t, u) -> view.setImage(t), inputStream);
+			this(convertViewToConsumer(view), inputStream);
 		}
 
 		private LoadItem(BiConsumer<Image, Boolean> action, InputStream input) {
 			this.input = input;
 			this.action = action;
+			location = null;
+		}
+
+		public LoadItem(BiConsumer<Image, Boolean> action, URL location) {
+			this.action = action;
+			this.location = location;
+			input = null;
+		}
+
+		public LoadItem(ImageView view, URL location) {
+			action = convertViewToConsumer(view);
+			this.location = location;
+			input = null;
 		}
 
 		/**
@@ -43,9 +62,8 @@ public final class Images {
 			while (!loadQueue.isEmpty()) {
 				try {
 					LoadItem item = loadQueue.pop();
-					item.action.accept(new Image(item.input), true);
+					item.action.accept(new Image(item.input == null ? item.location.openStream() : item.input), true);
 				} catch (Throwable e) {
-					e.printStackTrace();
 				}
 			}
 			imageLoaderThread = new Thread(this);
@@ -89,6 +107,24 @@ public final class Images {
 		loadQueue.push(new LoadItem(view, input));
 		start();
 
+	}
+
+	public static void loadImageInBackground(ImageView view, URL location) {
+		Image randomMissingTextureIcon = getRandomMissingTextureIcon();
+		if (randomMissingTextureIcon != null)
+			view.setImage(randomMissingTextureIcon);
+
+		loadQueue.push(new LoadItem(view, location));
+		start();
+	}
+
+	public static void loadImageInBackground(BiConsumer<Image, Boolean> action, URL location) {
+		Image randomMissingTextureIcon = getRandomMissingTextureIcon();
+		if (randomMissingTextureIcon != null)
+			action.accept(randomMissingTextureIcon, false);
+
+		loadQueue.push(new LoadItem(action, location));
+		start();
 	}
 
 	/**
