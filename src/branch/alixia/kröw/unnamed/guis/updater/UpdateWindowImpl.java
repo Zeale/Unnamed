@@ -22,7 +22,6 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -59,7 +58,10 @@ public class UpdateWindowImpl extends UWindowBase {
 			checkForUpdates();
 	}
 
+	private boolean checkingForUpdates;
+
 	public void checkForUpdates() {
+		checkingForUpdates = true;
 		setMinSize(1206, 726);
 		setCenter(wrapper);
 		status.setText("Attempting to connect to update repository...");
@@ -98,11 +100,6 @@ public class UpdateWindowImpl extends UWindowBase {
 							status.setFill(Color.RED);
 							status.setText("Failed to obtain the version of the update.");
 						});
-					} else if (!map.containsKey("version")) {
-						Platform.runLater(() -> {
-							status.setFill(Color.RED);
-							status.setText("Failed to determine the version ID of the update.");
-						});
 					} else {
 						new Version(map);
 					}
@@ -111,6 +108,7 @@ public class UpdateWindowImpl extends UWindowBase {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			checkingForUpdates = false;
 		}).start();
 	}
 
@@ -197,19 +195,14 @@ public class UpdateWindowImpl extends UWindowBase {
 
 		private final URL downloadLocation;
 
+		private final org.alixia.chatroom.api.Version internalVersion;
+
 		private boolean blockDownload;
 
 		{
 
-			contentPane.setOnMouseClicked(new EventHandler<Event>() {
-
-				@Override
-				public void handle(Event event) {
-					System.out.println(contentPane.getWidth());
-					System.out.println(contentPane.getHeight());
-					System.out.println();
-				}
-			});
+			version.setTranslateY(-5);// Gives a superscript-like look
+			nameWrap.setAlignment(Pos.CENTER);
 
 			backgroundScreenshot1.setFitHeight(702);
 			backgroundScreenshot1.setFitWidth(860);
@@ -376,6 +369,7 @@ public class UpdateWindowImpl extends UWindowBase {
 			if (response != 200) {
 				name.setFill(Color.RED);
 				name.setText("Unknown...");
+				internalVersion = null;
 			} else {
 				Datamap downloadInfo = Datamap.read(downloadInfoLocation.openStream());
 
@@ -388,8 +382,12 @@ public class UpdateWindowImpl extends UWindowBase {
 				else if (downloadInfo.containsKey("version"))
 					map = downloadInfo;
 				if (map != null) {
-					// TODO Display version
-				}
+					String versionName = map.get("version");
+					version.setText("v" + versionName);
+					version.setFill(Color.ORANGE);
+					internalVersion = new org.alixia.chatroom.api.Version(versionName);
+				} else
+					internalVersion = null;
 
 				if (!downloadInfo.containsKey("version-description"))
 					description.setFill(Color.RED);
@@ -414,6 +412,11 @@ public class UpdateWindowImpl extends UWindowBase {
 					}
 				}
 			}
+
+			// If the version could not be determined or the version is this version (or
+			// before this version), don't allow downloading.
+			if (internalVersion == null || internalVersion.compareTo(Unnamed.PROGRAM_VERSION) <= 0)
+				download.setDisable(true);
 		}
 	}
 
@@ -431,6 +434,8 @@ public class UpdateWindowImpl extends UWindowBase {
 		updateCheckerProgress.setPrefWidth(400);
 		FXTools.styleBasicInput(updateCheckerProgress, continueButton);
 		continueButton.setOnAction(event -> {
+			if (checkingForUpdates)
+				return;
 			setLeft(versionsWrapper);
 			Text noVersionSelectedText = new Text("No version selected");
 			styleText(noVersionSelectedText);
