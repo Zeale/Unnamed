@@ -65,7 +65,7 @@ public class UpdateWindowImpl extends UWindowBase {
 
 	private void checkDownload() {
 		if (LATEST_UPDATE.isFile()) {
-			center.getChildren().add(updateOverlay);
+			updateOverlay.setVisible(true);
 			updateReadyTextTransition.play();
 		}
 	}
@@ -144,8 +144,7 @@ public class UpdateWindowImpl extends UWindowBase {
 	private final HBox updateReadyWrapper = new HBox(updateReadyIcon, updateReadyText);
 	private final AnchorPane updateOverlay = new AnchorPane(updateReadyWrapper);
 	private final Transition updateReadyTextTransition = FXTools.buildColorwheelTransition(updateReadyText,
-			Duration.seconds(0.3));
-
+			Duration.seconds(0.4));
 	/*
 	 * Loading Screen
 	 */
@@ -162,7 +161,7 @@ public class UpdateWindowImpl extends UWindowBase {
 	private final ScrollPane versionsWrapper = new ScrollPane(versions);
 
 	private final StackPane content = new StackPane();
-	private final AnchorPane center = new AnchorPane(content);
+	private final AnchorPane center = new AnchorPane(updateOverlay, content);
 
 	private void setCenterContent(Node node) {
 		content.getChildren().clear();
@@ -202,6 +201,14 @@ public class UpdateWindowImpl extends UWindowBase {
 		status.setFont(Font.font(28));
 
 		AnchorPane.setRightAnchor(updateOverlay, 0d);
+		updateReadyText.setFont(Font.font(null, FontWeight.EXTRA_BOLD, 18));
+		AnchorPane.setTopAnchor(updateReadyWrapper, 7d);
+		AnchorPane.setBottomAnchor(updateReadyWrapper, 7d);
+		AnchorPane.setLeftAnchor(updateReadyWrapper, 10d);
+		AnchorPane.setRightAnchor(updateReadyWrapper, 10d);
+		updateOverlay.setBorder(FXTools.getBorderFromColor(Color.BLACK.brighter(), -0.1, 5));
+		updateOverlay.setBackground(FXTools.getBackgroundFromColor(Color.DARKGRAY.darker(), 5));
+		updateOverlay.setVisible(false);
 
 	}
 
@@ -322,7 +329,7 @@ public class UpdateWindowImpl extends UWindowBase {
 
 			downloadProgress.setVisible(false);
 
-			view.setOnAction(event -> setCenter(contentPane));
+			view.setOnAction(event -> setCenterContent(contentPane));
 
 			download.setOnAction(new EventHandler<ActionEvent>() {
 
