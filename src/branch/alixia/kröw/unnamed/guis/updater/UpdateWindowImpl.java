@@ -33,6 +33,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
@@ -84,7 +85,7 @@ public class UpdateWindowImpl extends UWindowBase {
 	public void checkForUpdates() {
 		checkingForUpdates = true;
 		setMinSize(1206, 726);
-		setCenterContent(wrapper);
+		showUpdateChecker();
 		status.setText("Attempting to connect to update repository...");
 
 		// Start a new thread to check the website so that the window doesn't lag.
@@ -145,6 +146,15 @@ public class UpdateWindowImpl extends UWindowBase {
 	private final AnchorPane updateOverlay = new AnchorPane(updateReadyWrapper);
 	private final Transition updateReadyTextTransition = FXTools.buildColorwheelTransition(updateReadyText,
 			Duration.seconds(0.4));
+
+	{
+
+		updateReadyWrapper.setOnMouseClicked(event -> {
+			if (event.getButton() == MouseButton.PRIMARY)
+				promptInstall();
+		});
+	}
+
 	/*
 	 * Loading Screen
 	 */
@@ -152,7 +162,39 @@ public class UpdateWindowImpl extends UWindowBase {
 	private final Text status = new Text();
 	private final Button continueButton = new Button("Continue");
 
-	private final VBox wrapper = new VBox(40, updateCheckerProgress, status, continueButton);
+	private final VBox updateCheckerWrapper = new VBox(40, updateCheckerProgress, status, continueButton);
+
+	/*
+	 * Installation Prompt Screen
+	 */
+
+	private final Text installationWarning = new Text(
+			"Are you sure you want to attempt an install? The program will rewrite itself in this process."),
+			installationNotice = new Text(
+					"If anything goes wrong, you'll need to download the program off the internet again. Your data won't be lost.");
+	private final VBox installationWarningsWrapper = new VBox(5, installationWarning, installationNotice);
+	private final Button installationPromptYes = new Button("Continue" + (Math.random() > 0.85 ? " (heil yes)" : "")),
+			installationPromptNo = new Button("No");
+	private final HBox installationPromptButtonHolder = new HBox(50, installationPromptYes, installationPromptNo);
+	private final VBox installationPromptRoot = new VBox(25, installationWarningsWrapper,
+			installationPromptButtonHolder);
+
+	{
+		installationWarning.setFont(Font.font(20));
+		installationNotice.setFont(Font.font(16));
+		installationNotice.setFill(Color.ORANGE);
+		installationWarning.setWrappingWidth(600);
+		installationNotice.setWrappingWidth(500);
+
+		installationWarningsWrapper.setAlignment(Pos.CENTER);
+		installationWarningsWrapper.setFillWidth(false);
+		installationPromptButtonHolder.setAlignment(Pos.CENTER);
+		installationPromptButtonHolder.setFillHeight(false);
+		installationPromptRoot.setAlignment(Pos.CENTER);
+		installationPromptRoot.setFillWidth(false);
+
+		FXTools.styleBasicInput(installationPromptYes, installationPromptNo);
+	}
 
 	/*
 	 * Actual Screen
@@ -161,14 +203,16 @@ public class UpdateWindowImpl extends UWindowBase {
 	private final ScrollPane versionsWrapper = new ScrollPane(versions);
 
 	private final StackPane content = new StackPane();
-	private final AnchorPane center = new AnchorPane(updateOverlay, content);
+	private final AnchorPane center = new AnchorPane(content, updateOverlay);
 
 	private void setCenterContent(Node node) {
 		content.getChildren().clear();
-		content.getChildren().add(node);
+		if (node != null)
+			content.getChildren().add(node);
 	}
 
 	{
+
 		/*
 		 * Child Initialization
 		 */
@@ -184,18 +228,15 @@ public class UpdateWindowImpl extends UWindowBase {
 		versionsWrapper.setMinWidth(200);
 		FXTools.setDefaultBackground(versionsWrapper);
 
-		wrapper.setAlignment(Pos.CENTER);
-		wrapper.setFillWidth(false);
+		updateCheckerWrapper.setAlignment(Pos.CENTER);
+		updateCheckerWrapper.setFillWidth(false);
 		updateCheckerProgress.setPrefWidth(400);
 		FXTools.styleBasicInput(updateCheckerProgress, continueButton);
+
 		continueButton.setOnAction(event -> {
 			if (checkingForUpdates)
 				return;
-			setLeft(versionsWrapper);
-			Text noVersionSelectedText = new Text("No version selected");
-			styleText(noVersionSelectedText);
-			setCenterContent(noVersionSelectedText);
-
+			showVersions();
 		});
 
 		status.setFont(Font.font(28));
@@ -210,6 +251,33 @@ public class UpdateWindowImpl extends UWindowBase {
 		updateOverlay.setBackground(FXTools.getBackgroundFromColor(Color.DARKGRAY.darker(), 5));
 		updateOverlay.setVisible(false);
 
+	}
+
+	private void emptyWindow() {
+		setLeft(null);
+		setRight(null);
+		setBorder(null);
+		setCenterContent(null);
+		checkDownload();
+	}
+
+	private void showVersions() {
+		emptyWindow();
+		setLeft(versionsWrapper);
+		Text noVersionSelectedText = new Text("No version selected");
+		styleText(noVersionSelectedText);
+		setCenterContent(noVersionSelectedText);
+	}
+
+	private void showUpdateChecker() {
+		emptyWindow();
+		setCenterContent(updateCheckerWrapper);
+	}
+
+	private void promptInstall() {
+		emptyWindow();
+		setCenterContent(installationPromptRoot);
+		updateOverlay.setVisible(false);
 	}
 
 	private final class Version {
@@ -425,6 +493,8 @@ public class UpdateWindowImpl extends UWindowBase {
 										});
 									}).start();
 								});
+
+								checkDownload();
 
 							} catch (Exception e2) {
 								handleException(e2);
