@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,11 +21,13 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
@@ -47,7 +50,25 @@ import javafx.util.Duration;
 public class UpdateWindowImpl extends UWindowBase {
 
 	private final static File UPDATE_DOWNLOADS_ROOT = new File(Unnamed.PROGRAM_ROOT, "Updates");
-	private final static File LATEST_UPDATE = new File(UPDATE_DOWNLOADS_ROOT, "Latest.jar");
+	private final static File LATEST_UPDATE = new File(UPDATE_DOWNLOADS_ROOT, "Update.jar");
+	private static final File CURRENT_PROGRAM_LOCATION;
+	static {
+		File location;
+		try {
+			location = new File(UpdateWindowImpl.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			location = null;
+		}
+		CURRENT_PROGRAM_LOCATION = location;
+	}
+
+	private void checkDownload() {
+		if (LATEST_UPDATE.isFile()) {
+			center.getChildren().add(updateOverlay);
+			updateReadyTextTransition.play();
+		}
+	}
 
 	static {
 		UPDATE_DOWNLOADS_ROOT.mkdirs();
@@ -63,7 +84,7 @@ public class UpdateWindowImpl extends UWindowBase {
 	public void checkForUpdates() {
 		checkingForUpdates = true;
 		setMinSize(1206, 726);
-		setCenter(wrapper);
+		setCenterContent(wrapper);
 		status.setText("Attempting to connect to update repository...");
 
 		// Start a new thread to check the website so that the window doesn't lag.
@@ -110,7 +131,20 @@ public class UpdateWindowImpl extends UWindowBase {
 			}
 			checkingForUpdates = false;
 		}).start();
+
+		checkDownload();
 	}
+
+	/*
+	 * Update-ready Overlay
+	 */
+
+	private final Text updateReadyText = new Text("Update Ready!");
+	private final ImageView updateReadyIcon = new ImageView();
+	private final HBox updateReadyWrapper = new HBox(updateReadyIcon, updateReadyText);
+	private final AnchorPane updateOverlay = new AnchorPane(updateReadyWrapper);
+	private final Transition updateReadyTextTransition = FXTools.buildColorwheelTransition(updateReadyText,
+			Duration.seconds(0.3));
 
 	/*
 	 * Loading Screen
@@ -126,6 +160,50 @@ public class UpdateWindowImpl extends UWindowBase {
 	 */
 	private final VBox versions = new VBox();
 	private final ScrollPane versionsWrapper = new ScrollPane(versions);
+
+	private final StackPane content = new StackPane();
+	private final AnchorPane center = new AnchorPane(content);
+
+	private void setCenterContent(Node node) {
+		content.getChildren().clear();
+		content.getChildren().add(node);
+	}
+
+	{
+		/*
+		 * Child Initialization
+		 */
+
+		setCenter(center);
+		content.setAlignment(Pos.CENTER);
+		AnchorPane.setRightAnchor(content, 0d);
+		AnchorPane.setTopAnchor(content, 0d);
+		AnchorPane.setLeftAnchor(content, 0d);
+		AnchorPane.setBottomAnchor(content, 0d);
+
+		versionsWrapper.setBorder(FXTools.getBorderFromColor(Color.BLACK));
+		versionsWrapper.setMinWidth(200);
+		FXTools.setDefaultBackground(versionsWrapper);
+
+		wrapper.setAlignment(Pos.CENTER);
+		wrapper.setFillWidth(false);
+		updateCheckerProgress.setPrefWidth(400);
+		FXTools.styleBasicInput(updateCheckerProgress, continueButton);
+		continueButton.setOnAction(event -> {
+			if (checkingForUpdates)
+				return;
+			setLeft(versionsWrapper);
+			Text noVersionSelectedText = new Text("No version selected");
+			styleText(noVersionSelectedText);
+			setCenterContent(noVersionSelectedText);
+
+		});
+
+		status.setFont(Font.font(28));
+
+		AnchorPane.setRightAnchor(updateOverlay, 0d);
+
+	}
 
 	private final class Version {
 
@@ -418,32 +496,6 @@ public class UpdateWindowImpl extends UWindowBase {
 			if (internalVersion == null || internalVersion.compareTo(Unnamed.PROGRAM_VERSION) <= 0)
 				download.setDisable(true);
 		}
-	}
-
-	{
-		/*
-		 * Child Initialization
-		 */
-
-		versionsWrapper.setBorder(FXTools.getBorderFromColor(Color.BLACK));
-		versionsWrapper.setMinWidth(200);
-		FXTools.setDefaultBackground(versionsWrapper);
-
-		wrapper.setAlignment(Pos.CENTER);
-		wrapper.setFillWidth(false);
-		updateCheckerProgress.setPrefWidth(400);
-		FXTools.styleBasicInput(updateCheckerProgress, continueButton);
-		continueButton.setOnAction(event -> {
-			if (checkingForUpdates)
-				return;
-			setLeft(versionsWrapper);
-			Text noVersionSelectedText = new Text("No version selected");
-			styleText(noVersionSelectedText);
-			setCenter(noVersionSelectedText);
-		});
-
-		status.setFont(Font.font(28));
-
 	}
 
 	private static final void styleText(Text text) {
