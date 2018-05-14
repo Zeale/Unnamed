@@ -286,6 +286,8 @@ public class UpdateWindowImpl extends UWindowBase {
 
 		{
 
+			description.wrappingWidthProperty().bind(UpdateWindowImpl.this.content.widthProperty().multiply(3d / 4));
+
 			version.setTranslateY(-5);// Gives a superscript-like look
 			nameWrap.setAlignment(Pos.CENTER);
 
