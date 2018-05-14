@@ -299,7 +299,7 @@ public class ConstructWindowImpl extends UWindowBase {
 		Text t = new Text(text);
 		t.setFont(Font.font(null, FontWeight.BOLD, -1));
 
-		FXTools.applyColorwheelTransition(t);
+		FXTools.applyHoverColorAnimation(t);
 
 		return t;
 	}

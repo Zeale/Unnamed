@@ -85,7 +85,7 @@ class NewConstructWindowImpl extends UWindowBase {
 		 * Menu Bar Setup
 		 */
 		getMenuBar().new MenuItem((Node) cancel);
-		FXTools.applyColorwheelTransition(cancel);
+		FXTools.applyHoverColorAnimation(cancel);
 		cancel.setFont(Font.font(null, FontWeight.BOLD, -1));
 		cancel.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override

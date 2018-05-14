@@ -40,7 +40,17 @@ public final class FXTools {
 		return new Border(new BorderStroke(color, BorderStrokeStyle.SOLID, null, new BorderWidths(width)));
 	}
 
-	public static void applyColorwheelTransition(Shape shape, Duration duration, Color... colors) {
+	public static Transition applyHoverColorAnimation(Shape shape, Duration duration, Color... colors) {
+
+		Transition repeater = buildColorwheelTransition(shape, duration, colors);
+
+		shape.setOnMouseEntered(event -> repeater.play());
+		shape.setOnMouseExited(event -> repeater.pause());
+
+		return repeater;
+	}
+
+	public static Transition buildColorwheelTransition(Shape shape, Duration duration, Color... colors) {
 		shape.setFill(colors[0]);
 		FillTransition[] transitions = new FillTransition[colors.length];
 		for (int i = 0; i < colors.length - 1;)
@@ -51,20 +61,31 @@ public final class FXTools {
 		SequentialTransition repeater = new SequentialTransition(transitions);
 
 		repeater.setCycleCount(Transition.INDEFINITE);
+		return repeater;
+	}
 
-		shape.setOnMouseEntered(event -> repeater.play());
-		shape.setOnMouseExited(event -> repeater.pause());
+	public static Transition buildColorwheelTransition(Shape shape, Color... colors) {
+		return buildColorwheelTransition(shape, DEFAULT_COLORWHEEL_TRANSITION_DURATION, colors);
+	}
+
+	public static Transition buildColorwheelTransition(Shape shape, Duration duration) {
+		return buildColorwheelTransition(shape, duration, DEFAULT_COLORWHEEL_TRANSITION_COLORS);
+	}
+
+	public static Transition buildColorwheelTransition(Shape shape) {
+		return buildColorwheelTransition(shape, DEFAULT_COLORWHEEL_TRANSITION_COLORS);
 	}
 
 	private static final Color[] DEFAULT_COLORWHEEL_TRANSITION_COLORS = new Color[] { RED, GOLD, GREEN, BLUE };
 	private static final Duration DEFAULT_COLORWHEEL_TRANSITION_DURATION = Duration.seconds(0.5);
 
-	public static void applyColorwheelTransition(Shape shape, Color... colors) {
-		applyColorwheelTransition(shape, DEFAULT_COLORWHEEL_TRANSITION_DURATION, colors);
+	public static Transition applyHoverColorAnimation(Shape shape, Color... colors) {
+		return applyHoverColorAnimation(shape, DEFAULT_COLORWHEEL_TRANSITION_DURATION, colors);
 	}
 
-	public static void applyColorwheelTransition(Shape shape) {
-		applyColorwheelTransition(shape, DEFAULT_COLORWHEEL_TRANSITION_DURATION, DEFAULT_COLORWHEEL_TRANSITION_COLORS);
+	public static Transition applyHoverColorAnimation(Shape shape) {
+		return applyHoverColorAnimation(shape, DEFAULT_COLORWHEEL_TRANSITION_DURATION,
+				DEFAULT_COLORWHEEL_TRANSITION_COLORS);
 	}
 
 	public static void styleBasicInput(Region... inputs) {
