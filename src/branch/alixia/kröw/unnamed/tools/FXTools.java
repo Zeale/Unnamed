@@ -18,6 +18,7 @@ import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -32,12 +33,22 @@ public final class FXTools {
 		return new Background(new BackgroundFill(color, null, null));
 	}
 
+	public static Background getBackgroundFromColor(Paint color, double radius) {
+		return new Background(new BackgroundFill(color, radius < 0 ? null : new CornerRadii(radius), null));
+	}
+
 	public static Border getBorderFromColor(Paint color) {
 		return getBorderFromColor(color, 2);
 	}
 
 	public static Border getBorderFromColor(Paint color, double width) {
-		return new Border(new BorderStroke(color, BorderStrokeStyle.SOLID, null, new BorderWidths(width)));
+		return new Border(
+				new BorderStroke(color, BorderStrokeStyle.SOLID, null, width < 0 ? null : new BorderWidths(width)));
+	}
+
+	public static Border getBorderFromColor(Paint color, double width, double radii) {
+		return new Border(new BorderStroke(color, BorderStrokeStyle.SOLID, radii < 0 ? null : new CornerRadii(radii),
+				width < 0 ? null : new BorderWidths(width)));
 	}
 
 	public static Transition applyHoverColorAnimation(Shape shape, Duration duration, Color... colors) {
