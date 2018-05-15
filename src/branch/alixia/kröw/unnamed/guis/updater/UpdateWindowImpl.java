@@ -59,7 +59,7 @@ public class UpdateWindowImpl extends UWindowBase {
 
 	private final static File UPDATE_DOWNLOADS_ROOT = new File(Unnamed.PROGRAM_ROOT, "Updates");
 	private final static File LATEST_UPDATE = new File(UPDATE_DOWNLOADS_ROOT, "Update.jar");
-	private static final File CURRENT_PROGRAM_LOCATION;
+	static final File CURRENT_PROGRAM_LOCATION;
 	static {
 		File location;
 		try {
@@ -89,8 +89,16 @@ public class UpdateWindowImpl extends UWindowBase {
 
 	private boolean checkingForUpdates;
 
+	private Version latest;
+
 	public void checkForUpdates() {
+		// INIT
 		checkingForUpdates = true;
+		overlay.pause();
+		if (latest != null)
+			latest.dispose();
+
+		// Update Checking
 		setMinSize(1206, 726);
 		showUpdateChecker();
 		status.setText("Attempting to connect to update repository...");
@@ -130,7 +138,7 @@ public class UpdateWindowImpl extends UWindowBase {
 							status.setText("Failed to obtain the version of the update.");
 						});
 					} else {
-						new Version(map);
+						latest = new Version(map);
 					}
 				}
 
@@ -138,9 +146,9 @@ public class UpdateWindowImpl extends UWindowBase {
 				e.printStackTrace();
 			}
 			checkingForUpdates = false;
+			checkDownload();
 		}).start();
 
-		checkDownload();
 	}
 
 	/*
@@ -215,9 +223,13 @@ public class UpdateWindowImpl extends UWindowBase {
 	private void showVersions() {
 		emptyWindow();
 		setLeft(versionsWrapper);
+		setCenterContent(getNoVersionSelectedText());
+	}
+
+	private final static Text getNoVersionSelectedText() {
 		Text noVersionSelectedText = new Text("No version selected");
 		styleText(noVersionSelectedText);
-		setCenterContent(noVersionSelectedText);
+		return noVersionSelectedText;
 	}
 
 	private void showUpdateChecker() {
@@ -226,12 +238,20 @@ public class UpdateWindowImpl extends UWindowBase {
 	}
 
 	private void promptInstall() {
-		emptyWindow();
-		setCenterContent(installationPrompt);
-		overlay.hide();
+		getScene().setRoot(installationPrompt);
+	}
+
+	private Node getCenterContent() {
+		return content.getChildren().get(0);
 	}
 
 	private final class Version {
+
+		public void dispose() {
+			versions.getChildren().remove(listing);
+			if (getCenterContent() == contentPane)
+				setCenterContent(getNoVersionSelectedText());
+		}
 
 		private int backgroundAnimationIterator = 1;
 
@@ -380,6 +400,7 @@ public class UpdateWindowImpl extends UWindowBase {
 							download.setText("Download");
 							download.setTextFill(Color.WHITE);
 							blockDownload = false;
+							checkDownload();
 						});
 					}).start();
 					e.printStackTrace();
@@ -390,7 +411,9 @@ public class UpdateWindowImpl extends UWindowBase {
 				public void handle(ActionEvent event) {
 					if (blockDownload)
 						return;
+					overlay.pause();
 					blockDownload = true;
+
 					download.setText("Downloading...");
 					download.setTextFill(Color.GREEN);
 					downloadProgress.setVisible(true);
@@ -442,6 +465,7 @@ public class UpdateWindowImpl extends UWindowBase {
 											download.setText("Download");
 											download.setTextFill(Color.WHITE);
 											blockDownload = false;
+											checkDownload();
 										});
 									}).start();
 								});
