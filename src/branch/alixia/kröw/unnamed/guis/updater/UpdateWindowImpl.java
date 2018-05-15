@@ -12,7 +12,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import branch.alixia.kröw.unnamed.Debug;
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.unnamed.Datamap;
 import branch.alixia.unnamed.Images;
@@ -22,7 +21,6 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -51,6 +49,14 @@ import javafx.util.Duration;
 
 public class UpdateWindowImpl extends UWindowBase {
 
+	private final UpdateOverlay overlay = new UpdateOverlay();
+	{
+		overlay.setOnMouseClicked(event -> {
+			if (event.getButton() == MouseButton.PRIMARY)
+				promptInstall();
+		});
+	}
+
 	private final static File UPDATE_DOWNLOADS_ROOT = new File(Unnamed.PROGRAM_ROOT, "Updates");
 	private final static File LATEST_UPDATE = new File(UPDATE_DOWNLOADS_ROOT, "Update.jar");
 	private static final File CURRENT_PROGRAM_LOCATION;
@@ -67,8 +73,8 @@ public class UpdateWindowImpl extends UWindowBase {
 
 	private void checkDownload() {
 		if (LATEST_UPDATE.isFile()) {
-			updateOverlay.setVisible(true);
-			updateReadyTextTransition.play();
+			overlay.show();
+			overlay.play();
 		}
 	}
 
@@ -141,21 +147,6 @@ public class UpdateWindowImpl extends UWindowBase {
 	 * Update-ready Overlay
 	 */
 
-	private final Text updateReadyText = new Text("Update Ready!");
-	private final ImageView updateReadyIcon = new ImageView();
-	private final HBox updateReadyWrapper = new HBox(updateReadyIcon, updateReadyText);
-	private final AnchorPane updateOverlay = new AnchorPane(updateReadyWrapper);
-	private final Transition updateReadyTextTransition = FXTools.buildColorwheelTransition(updateReadyText,
-			Duration.seconds(0.4));
-
-	{
-
-		updateReadyWrapper.setOnMouseClicked(event -> {
-			if (event.getButton() == MouseButton.PRIMARY)
-				promptInstall();
-		});
-	}
-
 	/*
 	 * Loading Screen
 	 */
@@ -172,7 +163,7 @@ public class UpdateWindowImpl extends UWindowBase {
 	private final ScrollPane versionsWrapper = new ScrollPane(versions);
 
 	private final StackPane content = new StackPane();
-	private final AnchorPane center = new AnchorPane(content, updateOverlay);
+	private final AnchorPane center = new AnchorPane(content, overlay);
 	private InstallationPrompt installationPrompt = new InstallationPrompt(this);
 
 	private void setCenterContent(Node node) {
@@ -211,16 +202,6 @@ public class UpdateWindowImpl extends UWindowBase {
 
 		status.setFont(Font.font(28));
 
-		AnchorPane.setRightAnchor(updateOverlay, 0d);
-		updateReadyText.setFont(Font.font(null, FontWeight.EXTRA_BOLD, 18));
-		AnchorPane.setTopAnchor(updateReadyWrapper, 7d);
-		AnchorPane.setBottomAnchor(updateReadyWrapper, 7d);
-		AnchorPane.setLeftAnchor(updateReadyWrapper, 10d);
-		AnchorPane.setRightAnchor(updateReadyWrapper, 10d);
-		updateOverlay.setBorder(FXTools.getBorderFromColor(Color.BLACK.brighter(), -0.1, 5));
-		updateOverlay.setBackground(FXTools.getBackgroundFromColor(Color.DARKGRAY.darker(), 5));
-		updateOverlay.setVisible(false);
-
 	}
 
 	private void emptyWindow() {
@@ -247,7 +228,7 @@ public class UpdateWindowImpl extends UWindowBase {
 	private void promptInstall() {
 		emptyWindow();
 		setCenterContent(installationPrompt);
-		updateOverlay.setVisible(false);
+		overlay.hide();
 	}
 
 	private final class Version {
