@@ -57,8 +57,8 @@ public class UpdateWindowImpl extends UWindowBase {
 		});
 	}
 
-	private final static File UPDATE_DOWNLOADS_ROOT = new File(Unnamed.PROGRAM_ROOT, "Updates");
-	private final static File LATEST_UPDATE = new File(UPDATE_DOWNLOADS_ROOT, "Update.jar");
+	final static File UPDATE_DOWNLOADS_ROOT = new File(Unnamed.PROGRAM_ROOT, "Updates");
+	final static File LATEST_UPDATE = new File(UPDATE_DOWNLOADS_ROOT, "Update.jar");
 	static final File CURRENT_PROGRAM_LOCATION;
 	static {
 		File location;
@@ -126,7 +126,7 @@ public class UpdateWindowImpl extends UWindowBase {
 				if (code == 200) {
 					// Get the map of urls for this version.
 					Datamap map = Datamap.read(connection.getInputStream());
-
+					System.out.println(map);
 					if (!map.containsKey("download-location")) {
 						Platform.runLater(() -> {
 							status.setFill(Color.RED);

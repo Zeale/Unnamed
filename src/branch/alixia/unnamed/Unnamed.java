@@ -15,7 +15,7 @@ public final class Unnamed extends Application {
 	public static final Color DEFAULT_WINDOW_COLOR = new Color(0.34, 0.34, 0.34, 1);
 	public static final Color ITEM_BORDER_COLOR = Color.BLUE;
 	public static final Color SECONDARY_WINDOW_BORDER_COLOR = ITEM_BORDER_COLOR.interpolate(DEFAULT_WINDOW_COLOR, 0.5);
-	private final static String PROGRAM_VERSION_IDENTIFIER = "0.1b0-nightly";
+	private final static String PROGRAM_VERSION_IDENTIFIER = "0.2b0-nightly";
 	public static final Version PROGRAM_VERSION = new Version(PROGRAM_VERSION_IDENTIFIER);
 
 	public static final File PROGRAM_ROOT = new File(System.getProperty("user.home"), "Unnamed");

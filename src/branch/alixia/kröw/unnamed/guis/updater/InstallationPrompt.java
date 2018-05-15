@@ -1,11 +1,16 @@
 package branch.alixia.kröw.unnamed.guis.updater;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.Scanner;
+
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.unnamed.guis.UWindowBase;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -27,7 +32,10 @@ final class InstallationPrompt extends UWindowBase {
 	final Button installationPromptYes = new Button("Continue" + (Math.random() > 0.85 ? " (heil yes)" : "")),
 			installationPromptNo = new Button("No");
 	final HBox installationPromptButtonHolder = new HBox(50, installationPromptYes, installationPromptNo);
-	final VBox wrapper = new VBox(25, installationWarningsWrapper, installationPromptButtonHolder);
+	final ProgressBar progress = new ProgressBar(0);
+	final VBox wrapper = new VBox(25, installationWarningsWrapper, installationPromptButtonHolder, progress);
+
+	private boolean installing;
 
 	{
 
@@ -48,12 +56,53 @@ final class InstallationPrompt extends UWindowBase {
 		wrapper.setAlignment(Pos.CENTER);
 		wrapper.setFillWidth(false);
 
-		FXTools.styleBasicInput(installationPromptYes, installationPromptNo);
+		FXTools.styleBasicInput(installationPromptYes, installationPromptNo, progress);
+
+		progress.setVisible(false);
 
 		installationPromptYes.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
+
+				if (installing)
+					return;
+				installing = true;
+
+				progress.setVisible(true);
+
+				new Thread(() -> {
+					long inputSize = UpdateWindowImpl.LATEST_UPDATE.length();
+
+					try (FileInputStream input = new FileInputStream(UpdateWindowImpl.LATEST_UPDATE);
+							FileOutputStream output = new FileOutputStream(UpdateWindowImpl.CURRENT_PROGRAM_LOCATION)) {
+
+						int bufferLength = 1024;
+						long totalReadData = 0;
+
+						byte[] buffer = new byte[bufferLength];
+						int amount;
+						while ((amount = input.read(buffer)) != -1) {
+							totalReadData += amount;
+							output.write(buffer, 0, amount);
+							progress.setProgress(totalReadData / inputSize);
+						}
+
+						Process process = Runtime.getRuntime()
+								.exec("java -jar " + UpdateWindowImpl.CURRENT_PROGRAM_LOCATION.getAbsolutePath());
+
+						Scanner scanner = new Scanner(process.getInputStream());
+						while (scanner.hasNextLine())
+							scanner.nextLine();
+						scanner.close();
+
+					} catch (Throwable e) {
+						// TODO Handle exceptions
+						e.printStackTrace();
+					}
+					installing = false;
+					System.exit(0);
+				}).start();
 
 			}
 		});
