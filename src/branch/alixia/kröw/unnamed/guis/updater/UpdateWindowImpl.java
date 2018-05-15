@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import branch.alixia.kröw.unnamed.Debug;
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.unnamed.Datamap;
 import branch.alixia.unnamed.Images;
@@ -172,6 +173,7 @@ public class UpdateWindowImpl extends UWindowBase {
 
 	private final StackPane content = new StackPane();
 	private final AnchorPane center = new AnchorPane(content, updateOverlay);
+	private InstallationPrompt installationPrompt = new InstallationPrompt(this);
 
 	private void setCenterContent(Node node) {
 		content.getChildren().clear();
@@ -244,7 +246,7 @@ public class UpdateWindowImpl extends UWindowBase {
 
 	private void promptInstall() {
 		emptyWindow();
-		setCenterContent(new InstallationPrompt(this));
+		setCenterContent(installationPrompt);
 		updateOverlay.setVisible(false);
 	}
 
@@ -327,8 +329,8 @@ public class UpdateWindowImpl extends UWindowBase {
 			version.setTranslateY(-5);// Gives a superscript-like look
 			nameWrap.setAlignment(Pos.CENTER);
 
-			backgroundScreenshot1.setFitHeight(702);
-			backgroundScreenshot1.setFitWidth(860);
+			backgroundScreenshot1.setFitHeight(710);
+			backgroundScreenshot1.setFitWidth(810);
 			backgroundScreenshot2.fitHeightProperty().bind(backgroundScreenshot1.fitHeightProperty());
 			backgroundScreenshot2.fitWidthProperty().bind(backgroundScreenshot1.fitWidthProperty());
 
@@ -336,6 +338,7 @@ public class UpdateWindowImpl extends UWindowBase {
 			AnchorPane.setRightAnchor(content, 0d);
 			AnchorPane.setBottomAnchor(content, 0d);
 			AnchorPane.setLeftAnchor(content, 0d);
+
 			wrapper.setAlignment(Pos.CENTER);
 			wrapper.setSpacing(40);
 			wrapper.setFillHeight(false);

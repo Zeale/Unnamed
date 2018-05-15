@@ -59,4 +59,5 @@ final class HomeWindow extends HomeWindowBase {
 		};
 
 	}
+
 }
