@@ -6,11 +6,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.function.BiConsumer;
+
+import javax.xml.ws.http.HTTPException;
 
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.unnamed.Datamap;
@@ -49,6 +54,34 @@ import javafx.util.Duration;
 
 public class UpdateWindowImpl extends UWindowBase {
 
+	private static final String PROGRAM_VERSION_LIST_SERVER_LOCATION = "http://dusttoash.org/Unnamed/program_versions.php";
+	private static final String PROGRAM_VERSION_LIST_DIRECTORY = "http://dusttoash.org/Unnamed/";
+
+	private static List<URL> getVersions() throws MalformedURLException, IOException {
+		HttpURLConnection connection = (HttpURLConnection) (new URL(PROGRAM_VERSION_LIST_SERVER_LOCATION)
+				.openConnection());
+		int code = connection.getResponseCode();
+
+		if (code != 200)
+			throw new HTTPException(code);
+		else {
+
+			List<URL> locations = new ArrayList<>();
+			Scanner scanner = new Scanner(connection.getInputStream());
+
+			while (scanner.hasNextLine())
+				try {
+					locations.add(new URL(PROGRAM_VERSION_LIST_DIRECTORY + "/" + scanner.nextLine() + "/version.info"));
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
+
+			scanner.close();
+
+			return locations;
+		}
+	}
+
 	private final UpdateOverlay overlay = new UpdateOverlay();
 	{
 		overlay.setOnMouseClicked(event -> {
@@ -82,71 +115,65 @@ public class UpdateWindowImpl extends UWindowBase {
 		UPDATE_DOWNLOADS_ROOT.mkdirs();
 	}
 
-	public UpdateWindowImpl(boolean checkForUpdates) {
-		if (checkForUpdates)
-			checkForUpdates();
+	public UpdateWindowImpl() {
+		refresh();
 	}
 
-	private boolean checkingForUpdates;
+	private boolean refreshing;
 
-	private Version latest;
+	private void refresh() {
+		if (refreshing)
+			return;
 
-	public void checkForUpdates() {
-		// INIT
-		checkingForUpdates = true;
-		overlay.pause();
-		if (latest != null)
-			latest.dispose();
-
-		// Update Checking
 		setMinSize(1206, 726);
-		showUpdateChecker();
-		status.setText("Attempting to connect to update repository...");
 
-		// Start a new thread to check the website so that the window doesn't lag.
+		continueButton.setDisable(true);
+		showUpdateChecker();
+		updateCheckerStatus.setText("Checking remote update list...");
+
+		refreshing = true;
+
+		// Clear the current list of versions.
+		List<Version> clone = new ArrayList<>(versions);
+		for (Version v : clone)
+			v.dispose();
+
+		// Check remote server for new list.
 		new Thread(() -> {
 			try {
 
-				HttpURLConnection connection = (HttpURLConnection) (new URL(
-						"http://dusttoash.org/Unnamed/latest/version").openConnection());
-				int code = connection.getResponseCode();
+				// Get list of version info repos.
+				List<URL> versionLinks = getVersions();
 
-				// Deal with the response code and show stuff to the user.
-				Platform.runLater(() -> {
-					if (code != 200) {
-						status.setFill(Color.RED);
-						status.setText("Failed to grab update information... HTTP Response code: " + code);
-					} else {
-						updateCheckerProgress.setProgress(1);
-						status.setFill(Color.GREEN);
-						status.setText("Successfully located update information!");
-					}
-				});
+				// Notify user of progress.
+				Platform.runLater(() -> updateCheckerStatus.setText("Gathering update information..."));
 
-				if (code == 200) {
-					// Get the map of urls for this version.
-					Datamap map = Datamap.read(connection.getInputStream());
-					System.out.println(map);
-					if (!map.containsKey("download-location")) {
-						Platform.runLater(() -> {
-							status.setFill(Color.RED);
-							status.setText("Failed to obtain the download location of the update...");
-						});
-					} else if (!map.containsKey("download-info")) {
-						Platform.runLater(() -> {
-							status.setFill(Color.RED);
-							status.setText("Failed to obtain the version of the update.");
-						});
-					} else {
-						latest = new Version(map);
+				// Gather information.
+				for (int i = 0; i < versionLinks.size(); i++) {
+					URL url = versionLinks.get(i);
+					try {
+						new Version(url);
+						updateCheckerProgress.setProgress((i + 1d) / versionLinks.size());
+					} catch (IOException e) {
+						System.err.println("Failed to show a version (URL: [" + url + "]):");
+						// TODO Show an error directly to the user.
+						e.printStackTrace();
 					}
 				}
 
+				Platform.runLater(() -> {
+					updateCheckerStatus.setText("Done!");
+					updateCheckerStatus.setFill(Color.GREEN);
+				});
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			checkingForUpdates = false;
+
 			checkDownload();
+
+			refreshing = false;
+			Platform.runLater(() -> continueButton.setDisable(false));
 		}).start();
 
 	}
@@ -159,16 +186,16 @@ public class UpdateWindowImpl extends UWindowBase {
 	 * Loading Screen
 	 */
 	private final ProgressBar updateCheckerProgress = new ProgressBar(0);
-	private final Text status = new Text();
+	private final Text updateCheckerStatus = new Text();
 	private final Button continueButton = new Button("Continue");
 
-	private final VBox updateCheckerWrapper = new VBox(40, updateCheckerProgress, status, continueButton);
+	private final VBox updateCheckerWrapper = new VBox(40, updateCheckerProgress, updateCheckerStatus, continueButton);
 
 	/*
 	 * Actual Screen
 	 */
-	private final VBox versions = new VBox();
-	private final ScrollPane versionsWrapper = new ScrollPane(versions);
+	private final VBox versionList = new VBox();
+	private final ScrollPane versionsWrapper = new ScrollPane(versionList);
 
 	private final StackPane content = new StackPane();
 	private final AnchorPane center = new AnchorPane(content, overlay);
@@ -203,12 +230,10 @@ public class UpdateWindowImpl extends UWindowBase {
 		FXTools.styleBasicInput(updateCheckerProgress, continueButton);
 
 		continueButton.setOnAction(event -> {
-			if (checkingForUpdates)
-				return;
 			showVersions();
 		});
 
-		status.setFont(Font.font(28));
+		updateCheckerStatus.setFont(Font.font(28));
 
 	}
 
@@ -245,12 +270,30 @@ public class UpdateWindowImpl extends UWindowBase {
 		return content.getChildren().get(0);
 	}
 
+	private final List<Version> versions = new ArrayList<>();
+
 	private final class Version {
 
-		public void dispose() {
-			versions.getChildren().remove(listing);
+		public void add() {
+			if (versions.contains(this))
+				return;
+
+			versions.add(this);
+			versionList.getChildren().add(listing);
+		}
+
+		public void remove() {
+			if (!versions.contains(this))
+				return;
+
+			versionList.getChildren().remove(listing);
 			if (getCenterContent() == contentPane)
 				setCenterContent(getNoVersionSelectedText());
+			versions.remove(this);
+		}
+
+		public void dispose() {
+			remove();
 		}
 
 		private int backgroundAnimationIterator = 1;
@@ -487,69 +530,64 @@ public class UpdateWindowImpl extends UWindowBase {
 			listing.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null,
 					new BorderWidths(0, 0, FXTools.COMMON_BORDER_WIDTH, 0))));
 
-			versions.getChildren().add(listing);
+			add();
 		}
 
 		public Version(Datamap data) throws IOException {
 
 			downloadLocation = new URL(data.get("download-location"));
 
-			// Location of an info file for the update
-			URL downloadInfoLocation = new URL(data.get("download-info"));
-			HttpURLConnection connection = (HttpURLConnection) downloadInfoLocation.openConnection();
-			int response = connection.getResponseCode();
-
-			if (response != 200) {
+			// Name
+			if (!data.containsKey("version-name"))
 				name.setFill(Color.RED);
-				name.setText("Unknown...");
-				internalVersion = null;
-			} else {
-				Datamap downloadInfo = Datamap.read(downloadInfoLocation.openStream());
+			name.setText(data.getOrDefault("version-name", "Unknown"));
 
-				if (!downloadInfo.containsKey("version-name"))
-					name.setFill(Color.RED);
-				name.setText(downloadInfo.getOrDefault("version-name", "Unknown"));
-				Datamap map = null;
-				if (data.containsKey("version"))
-					map = data;
-				else if (downloadInfo.containsKey("version"))
-					map = downloadInfo;
-				if (map != null) {
-					String versionName = map.get("version");
-					version.setText("v" + versionName);
-					version.setFill(Color.ORANGE);
+			// Version ID
+			if (data.containsKey("version")) {
+				String versionName = data.get("version");
+				version.setText("v" + versionName);
+				version.setFill(Color.ORANGE);
+//				System.out.println(versionName);
 				internalVersion = new branch.alixia.unnamed.api.Version(versionName);
-				} else
-					internalVersion = null;
+			} else
+				internalVersion = null;
+			System.out.println(data.get("version"));
 
-				if (!downloadInfo.containsKey("version-description"))
-					description.setFill(Color.RED);
-				description.setText(downloadInfo.getOrDefault("version-description", "Missing Description"));
-				Images.loadImageInBackground(icon, new URL(downloadInfo.get("version-icon")));
+			// Description
+			if (!data.containsKey("version-description"))
+				description.setFill(Color.RED);
+			description.setText(data.getOrDefault("version-description", "Missing Description"));
 
-				if (downloadInfo.containsKey("screenshots")) {
-					String locations[] = downloadInfo.get("screenshots").split(",");
-					for (String s : locations) {
-						s = s.trim();
-						Images.loadImageInBackground((BiConsumer<Image, Boolean>) (t, u) -> {
-							if (u) {
-								screenshots.add(t);
-								if (screenshots.size() == 1)
-									backgroundScreenshot1.setImage(t);
-								else if (screenshots.size() == 2) {
-									backgroundScreenshot2.setImage(t);
-									backgroundAnimator.play();
-								}
+			// Icon
+			Images.loadImageInBackground(icon, new URL(data.get("version-icon")));
+
+			// Screenshots
+			if (data.containsKey("screenshots")) {
+				String locations[] = data.get("screenshots").split(",");
+				for (String s : locations) {
+					s = s.trim();
+					Images.loadImageInBackground((BiConsumer<Image, Boolean>) (t, u) -> {
+						if (u) {
+							screenshots.add(t);
+							if (screenshots.size() == 1)
+								backgroundScreenshot1.setImage(t);
+							else if (screenshots.size() == 2) {
+								backgroundScreenshot2.setImage(t);
+								backgroundAnimator.play();
 							}
-						}, new URL(s));
-					}
+						}
+					}, new URL(s));
 				}
 			}
 
 			// If the version could not be determined or the version is this version (or
-			// before this version), don't allow downloading.
+			// before this version); don't allow downloading.
 			if (internalVersion == null || internalVersion.compareTo(Unnamed.PROGRAM_VERSION) <= 0)
 				download.setDisable(true);
+		}
+
+		public Version(URL location) throws IOException {
+			this(Datamap.read(location.openStream()));
 		}
 	}
 

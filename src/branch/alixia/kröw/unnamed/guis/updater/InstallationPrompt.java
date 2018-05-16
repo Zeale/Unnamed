@@ -2,10 +2,12 @@ package branch.alixia.kröw.unnamed.guis.updater;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.Scanner;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.unnamed.guis.UWindowBase;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -72,6 +74,8 @@ final class InstallationPrompt extends UWindowBase {
 				progress.setVisible(true);
 
 				new Thread(() -> {
+					boolean noReturn = false;
+
 					long inputSize = UpdateWindowImpl.LATEST_UPDATE.length();
 
 					try (FileInputStream input = new FileInputStream(UpdateWindowImpl.LATEST_UPDATE);
@@ -88,20 +92,29 @@ final class InstallationPrompt extends UWindowBase {
 							progress.setProgress(totalReadData / inputSize);
 						}
 
-						Process process = Runtime.getRuntime()
-								.exec("java -jar " + UpdateWindowImpl.CURRENT_PROGRAM_LOCATION.getAbsolutePath());
+						// There is no going back. :)
+						noReturn = true;
 
-						Scanner scanner = new Scanner(process.getInputStream());
-						while (scanner.hasNextLine())
-							scanner.nextLine();
-						scanner.close();
+						Reader reader = new InputStreamReader(Runtime.getRuntime()
+								.exec(new String[] { "java", "-jar",
+										UpdateWindowImpl.CURRENT_PROGRAM_LOCATION.getAbsolutePath() })
+								.getInputStream());
+						while (reader.ready())
+							reader.read();
 
 					} catch (Throwable e) {
 						// TODO Handle exceptions
 						e.printStackTrace();
+						return;
+					} finally {
+						if (noReturn) {
+							Platform.runLater(() -> getScene().getWindow().hide());
+							UpdateWindowImpl.LATEST_UPDATE.delete();
+							installing = false;
+							System.exit(0);
+						}
 					}
-					installing = false;
-					System.exit(0);
+
 				}).start();
 
 			}

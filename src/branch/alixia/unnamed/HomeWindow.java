@@ -53,7 +53,7 @@ final class HomeWindow extends HomeWindowBase {
 
 			@Override
 			protected void activate() {
-				MSGUIs.setScene(new Scene(new UpdateWindowImpl(true), Color.TRANSPARENT));
+				MSGUIs.setScene(new Scene(new UpdateWindowImpl(), Color.TRANSPARENT));
 			}
 
 		};
