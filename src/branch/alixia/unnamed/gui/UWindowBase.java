@@ -1,5 +1,6 @@
 package branch.alixia.unnamed.gui;
 
+import branch.alixia.kröw.unnamed.DefaultMenuBar;
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.unnamed.MenuBar;
 import branch.alixia.unnamed.Unnamed;
@@ -15,7 +16,7 @@ public class UWindowBase extends BorderPane {
 	public static final double COMMON_BORDER_WIDTH = FXTools.COMMON_BORDER_WIDTH;
 	public static final Color SECONDARY_WINDOW_BORDER_COLOR = Unnamed.SECONDARY_WINDOW_BORDER_COLOR;
 
-	private final ObjectProperty<MenuBar> menuBar = new SimpleObjectProperty<>(new MenuBar());
+	private final ObjectProperty<MenuBar> menuBar = new SimpleObjectProperty<>(new DefaultMenuBar());
 
 	{
 		topProperty().bind(menuBar);
