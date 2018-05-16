@@ -59,7 +59,7 @@ public class DefaultMenuBar extends MenuBar {
 		setRightMenuPadding(0);
 		setRightMenuSpacing(8);
 
-		rightCloseBar.heightProperty().bind(close.getButton().heightProperty().multiply(0.75));
+		rightCloseBar.heightProperty().bind(close.getButton().heightProperty());
 		leftCloseBar.heightProperty().bind(rightCloseBar.heightProperty());
 		rightCloseBar.widthProperty().bind(rightCloseBar.heightProperty().divide(6));
 		leftCloseBar.widthProperty().bind(leftCloseBar.heightProperty().divide(6));
@@ -77,6 +77,8 @@ public class DefaultMenuBar extends MenuBar {
 
 		homeText.setFill(Color.BLUE);
 		homeText.setFont(Font.font(null, FontWeight.BOLD, -1));
+		homeText.setScaleX(1.5);
+		homeText.setScaleY(1.5);
 
 		home.setOnMouseClicked(event -> {
 			if (event.getButton() == MouseButton.PRIMARY)
