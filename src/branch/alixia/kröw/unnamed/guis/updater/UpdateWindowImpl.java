@@ -580,6 +580,7 @@ public class UpdateWindowImpl extends UWindowBase {
 								backgroundAnimator.play();
 							}
 						}
+						// ~~ ImageView issue workaround ~~
 					}, new URL(s), 700, 700);
 				}
 			}
