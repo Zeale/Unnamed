@@ -547,11 +547,9 @@ public class UpdateWindowImpl extends UWindowBase {
 				String versionName = data.get("version");
 				version.setText("v" + versionName);
 				version.setFill(Color.ORANGE);
-//				System.out.println(versionName);
 				internalVersion = new branch.alixia.unnamed.api.Version(versionName);
 			} else
 				internalVersion = null;
-			System.out.println(data.get("version"));
 
 			// Description
 			if (!data.containsKey("version-description"))
