@@ -319,7 +319,7 @@ public class UpdateWindowImpl extends UWindowBase {
 
 		private final URL downloadLocation;
 
-		private final org.alixia.chatroom.api.Version internalVersion;
+		private final branch.alixia.unnamed.api.Version internalVersion;
 
 		private boolean blockDownload;
 
@@ -518,7 +518,7 @@ public class UpdateWindowImpl extends UWindowBase {
 					String versionName = map.get("version");
 					version.setText("v" + versionName);
 					version.setFill(Color.ORANGE);
-					internalVersion = new org.alixia.chatroom.api.Version(versionName);
+				internalVersion = new branch.alixia.unnamed.api.Version(versionName);
 				} else
 					internalVersion = null;
 

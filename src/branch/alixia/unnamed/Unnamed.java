@@ -2,8 +2,7 @@ package branch.alixia.unnamed;
 
 import java.io.File;
 
-import org.alixia.chatroom.api.Version;
-
+import branch.alixia.unnamed.api.Version;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -56,12 +55,6 @@ public final class Unnamed extends Application {
 		primaryStage.initStyle(StageStyle.TRANSPARENT);
 
 		showHome();
-
-		// The home window will need to verify that everything has loaded before it lets
-		// the user clicks buttons that involve loaded items.
-		if (!PROGRAM_ROOT.isDirectory()) {
-			// TODO Load things and have the HomeWindow reflect what has been loaded.
-		}
 
 	}
 
