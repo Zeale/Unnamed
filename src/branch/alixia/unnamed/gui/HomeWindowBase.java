@@ -1,4 +1,4 @@
-package branch.alixia.unnamed.guis;
+package branch.alixia.unnamed.gui;
 
 import branch.alixia.kröw.unnamed.DefaultMenuBar;
 import branch.alixia.kröw.unnamed.tools.FXTools;

@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 
 import branch.alixia.kröw.unnamed.tools.FXTools;
-import branch.alixia.unnamed.guis.UWindowBase;
+import branch.alixia.unnamed.gui.UWindowBase;
 import branch.alixia.unnamed.msapi.Construct;
 import branch.alixia.unnamed.msapi.Construct.ClassData;
 import javafx.beans.value.ChangeListener;

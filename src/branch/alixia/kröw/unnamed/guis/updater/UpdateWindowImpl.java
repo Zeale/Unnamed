@@ -21,7 +21,7 @@ import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.unnamed.Datamap;
 import branch.alixia.unnamed.Images;
 import branch.alixia.unnamed.Unnamed;
-import branch.alixia.unnamed.guis.UWindowBase;
+import branch.alixia.unnamed.gui.UWindowBase;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;

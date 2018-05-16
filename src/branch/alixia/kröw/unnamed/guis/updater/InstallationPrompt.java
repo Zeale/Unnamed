@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 import branch.alixia.kröw.unnamed.tools.FXTools;
-import branch.alixia.unnamed.guis.UWindowBase;
+import branch.alixia.unnamed.gui.UWindowBase;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

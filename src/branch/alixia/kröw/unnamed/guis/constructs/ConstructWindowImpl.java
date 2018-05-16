@@ -14,7 +14,7 @@ import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.unnamed.MenuBar;
 import branch.alixia.unnamed.Unnamed;
 import branch.alixia.unnamed.files.Directories;
-import branch.alixia.unnamed.guis.UWindowBase;
+import branch.alixia.unnamed.gui.UWindowBase;
 import branch.alixia.unnamed.msapi.Construct;
 import branch.alixia.unnamed.msapi.Construct.Class;
 import branch.alixia.unnamed.msapi.Construct.ClassData;
