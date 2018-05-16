@@ -357,8 +357,9 @@ public class UpdateWindowImpl extends UWindowBase {
 			backgroundAnimator.setCycleCount(Animation.INDEFINITE);
 		}
 
-		private final AnchorPane listing = new AnchorPane(wrapper),
-				contentPane = new AnchorPane(backgroundScreenshot1, backgroundScreenshot2, content);
+		private final StackPane backgroundImageSizer = new StackPane();
+		private final AnchorPane listing = new AnchorPane(wrapper), contentPane = new AnchorPane(backgroundScreenshot1,
+				backgroundScreenshot2, backgroundImageSizer, content);
 
 		private final URL downloadLocation;
 
@@ -373,10 +374,15 @@ public class UpdateWindowImpl extends UWindowBase {
 			version.setTranslateY(-5);// Gives a superscript-like look
 			nameWrap.setAlignment(Pos.CENTER);
 
-			backgroundScreenshot1.setFitHeight(710);
-			backgroundScreenshot1.setFitWidth(810);
-			backgroundScreenshot2.fitHeightProperty().bind(backgroundScreenshot1.fitHeightProperty());
-			backgroundScreenshot2.fitWidthProperty().bind(backgroundScreenshot1.fitWidthProperty());
+			AnchorPane.setTopAnchor(backgroundImageSizer, 0d);
+			AnchorPane.setRightAnchor(backgroundImageSizer, 0d);
+			AnchorPane.setBottomAnchor(backgroundImageSizer, 0d);
+			AnchorPane.setLeftAnchor(backgroundImageSizer, 0d);
+
+			backgroundScreenshot1.fitHeightProperty().bind(backgroundImageSizer.heightProperty());
+			backgroundScreenshot1.fitWidthProperty().bind(backgroundImageSizer.widthProperty());
+			backgroundScreenshot2.fitHeightProperty().bind(backgroundImageSizer.heightProperty());
+			backgroundScreenshot2.fitWidthProperty().bind(backgroundImageSizer.widthProperty());
 
 			AnchorPane.setTopAnchor(content, 0d);
 			AnchorPane.setRightAnchor(content, 0d);
@@ -574,7 +580,7 @@ public class UpdateWindowImpl extends UWindowBase {
 								backgroundAnimator.play();
 							}
 						}
-					}, new URL(s));
+					}, new URL(s), 700, 700);
 				}
 			}
 
