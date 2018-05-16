@@ -123,7 +123,9 @@ public class ItemBox extends ScrollPane {
 
 			wrapper.setAlignment(Pos.CENTER);
 
-			nameText.setFont(Font.font("Brush Script MT", 32));
+			// Font fix for people who don't have Brush Script MT (why do I have this...?)
+			nameText.setFont(
+					Font.getFamilies().contains("Brush Script MT") ? Font.font("Brush Script MT", 32) : Font.font(28));
 			nameText.setTextAlignment(TextAlignment.CENTER);
 			nameText.textProperty().bind(name);
 
