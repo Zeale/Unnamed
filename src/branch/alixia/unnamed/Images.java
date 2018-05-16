@@ -18,6 +18,7 @@ public final class Images {
 		private final BiConsumer<Image, Boolean> action;
 		private final InputStream input;
 		private final URL location;
+		private double width, height;
 
 		private static final BiConsumer<Image, Boolean> convertViewToConsumer(ImageView view) {
 			return (t, u) -> view.setImage(t);
@@ -33,16 +34,24 @@ public final class Images {
 			location = null;
 		}
 
-		public LoadItem(BiConsumer<Image, Boolean> action, URL location) {
+		private LoadItem(BiConsumer<Image, Boolean> action, URL location) {
 			this.action = action;
 			this.location = location;
 			input = null;
 		}
 
-		public LoadItem(ImageView view, URL location) {
+		private LoadItem(ImageView view, URL location) {
 			action = convertViewToConsumer(view);
 			this.location = location;
 			input = null;
+		}
+
+		public void setWidth(double width) {
+			this.width = width;
+		}
+
+		public void setHeight(double height) {
+			this.height = height;
 		}
 
 		/**
@@ -68,7 +77,8 @@ public final class Images {
 			while (!loadQueue.isEmpty()) {
 				try {
 					LoadItem item = loadQueue.pop();
-					item.action.accept(new Image(item.input == null ? item.location.openStream() : item.input), true);
+					item.action.accept(new Image(item.input == null ? item.location.openStream() : item.input,
+							item.width, item.height, false, true), true);
 				} catch (Throwable e) {
 					if (!suppressWarnings)
 						e.printStackTrace();
@@ -86,8 +96,8 @@ public final class Images {
 	private Images() {
 	}
 
-	public static void loadImageInBackground(ImageView view, String absolutePath) {
-		loadImageInBackground(view, Images.class.getResourceAsStream(absolutePath));
+	public static LoadItem loadImageInBackground(ImageView view, String absolutePath) {
+		return loadImageInBackground(view, Images.class.getResourceAsStream(absolutePath));
 	}
 
 	/**
@@ -106,33 +116,31 @@ public final class Images {
 	 * @param input
 	 *            An {@link InputStream} that the {@link Image} can be read from.
 	 */
-	public static void loadImageInBackground(ImageView view, InputStream input) {
-
-		Image randomMissingTextureIcon = getRandomMissingTextureIcon();
-		if (randomMissingTextureIcon != null)
-			view.setImage(randomMissingTextureIcon);
-
-		loadQueue.push(new LoadItem(view, input));
-		start();
-
+	public static LoadItem loadImageInBackground(ImageView view, InputStream input) {
+		return loadImageInBackground((BiConsumer<Image, Boolean>) (t, u) -> view.setImage(t), input);
 	}
 
-	public static void loadImageInBackground(ImageView view, URL location) {
-		Image randomMissingTextureIcon = getRandomMissingTextureIcon();
-		if (randomMissingTextureIcon != null)
-			view.setImage(randomMissingTextureIcon);
-
-		loadQueue.push(new LoadItem(view, location));
-		start();
+	public static LoadItem loadImageInBackground(ImageView view, URL location) {
+		return loadImageInBackground((BiConsumer<Image, Boolean>) (t, u) -> view.setImage(t), location);
 	}
 
-	public static void loadImageInBackground(BiConsumer<Image, Boolean> action, URL location) {
+	public static LoadItem loadImageInBackground(BiConsumer<Image, Boolean> action, URL location) {
 		Image randomMissingTextureIcon = getRandomMissingTextureIcon();
 		if (randomMissingTextureIcon != null)
 			action.accept(randomMissingTextureIcon, false);
 
-		loadQueue.push(new LoadItem(action, location));
+		LoadItem item = new LoadItem(action, location);
+		loadQueue.push(item);
 		start();
+		return item;
+	}
+
+	public static LoadItem loadImageInBackground(BiConsumer<Image, Boolean> action, URL location, double width,
+			double height) {
+		LoadItem item = loadImageInBackground(action, location);
+		item.setWidth(width);
+		item.setHeight(height);
+		return item;
 	}
 
 	/**
@@ -159,13 +167,15 @@ public final class Images {
 	 *            An {@link InputStream} which will be used to obtain the image
 	 *            loaded in the background.
 	 */
-	public static void loadImageInBackground(BiConsumer<Image, Boolean> action, InputStream input) {
+	public static LoadItem loadImageInBackground(BiConsumer<Image, Boolean> action, InputStream input) {
 		Image randomMissingTextureIcon = getRandomMissingTextureIcon();
 		if (randomMissingTextureIcon != null)
 			action.accept(randomMissingTextureIcon, false);
 
-		loadQueue.push(new LoadItem(action, input));
+		LoadItem item = new LoadItem(action, input);
+		loadQueue.push(item);
 		start();
+		return item;
 
 	}
 
