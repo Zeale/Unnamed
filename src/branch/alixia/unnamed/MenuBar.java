@@ -57,7 +57,6 @@ public class MenuBar extends AnchorPane {
 		}
 
 		{
-			button.setBorder(FXTools.getBorderFromColor(Color.BLACK, 1.8));
 			button.prefHeightProperty().bind(heightProperty());
 			button.prefWidthProperty().bind(button.prefHeightProperty());
 			add();
