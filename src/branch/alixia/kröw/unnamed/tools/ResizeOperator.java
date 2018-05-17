@@ -11,9 +11,10 @@ public class ResizeOperator implements EventHandler<MouseEvent> {
 
 	private final BooleanProperty enabled = new SimpleBooleanProperty(true);
 
-	public final class Drag {
+	protected final class Drag {
 		public final boolean top, bottom, left, right;
 		public double sx, sy;
+		public final double startX, startY;
 
 		public Drag(final MouseEvent click) {
 			top = top(click);
@@ -21,8 +22,8 @@ public class ResizeOperator implements EventHandler<MouseEvent> {
 			left = left(click);
 			right = right(click);
 
-			sx = click.getX();
-			sy = click.getY();
+			sx = startX = click.getX();
+			sy = startY = click.getY();
 
 			click.consume();
 		}
@@ -75,7 +76,12 @@ public class ResizeOperator implements EventHandler<MouseEvent> {
 			handleDrag(event);
 		if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED))
 			handleRelease(event);
-		if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED) && inRange(event))
+		if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED) && inRange(event)
+
+		// Synthesized click events are called from #handleRelease when the user drags
+		// window, such a short distance, that we assume that they were simply clicking.
+				&& !event.isSynthesized())
+
 			event.consume();
 	}
 
@@ -109,6 +115,17 @@ public class ResizeOperator implements EventHandler<MouseEvent> {
 	}
 
 	protected void handleRelease(final MouseEvent e) {
+		if (drag == null)
+			return;
+
+		double distance = Math.sqrt(Math.pow(drag.startX - e.getX(), 2) + Math.pow(drag.startY - e.getY(), 2));
+		if (distance <= 1.35 * resizeMargin) {
+			e.getPickResult().getIntersectedNode()
+					.fireEvent(new MouseEvent(this, null, MouseEvent.MOUSE_CLICKED, e.getX(), e.getY(), e.getScreenX(),
+							e.getScreenY(), e.getButton(), 1, e.isShiftDown(), e.isControlDown(), e.isAltDown(),
+							e.isMetaDown(), e.isPrimaryButtonDown(), e.isMiddleButtonDown(), e.isSecondaryButtonDown(),
+							true, false, true, e.getPickResult()));
+		}
 		drag = null;
 	}
 
