@@ -9,6 +9,10 @@ import branch.alixia.unnamed.Unnamed;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -23,8 +27,51 @@ public class UWindowBase extends BorderPane implements Resizable {
 
 	private final ObjectProperty<MenuBar> menuBar = new SimpleObjectProperty<>(new DefaultMenuBar());
 
+	private final ObjectProperty<Stage> boundStage = new SimpleObjectProperty<>();
+
+	public UWindowBase(Stage stage) {
+		boundStage.set(stage);
+	}
+
+	public UWindowBase() {
+	}
+
 	{
 		topProperty().bind(menuBar);
+
+		menuBar.addListener(new ChangeListener<MenuBar>() {
+
+			private double dx, dy;
+
+			private final EventHandler<? super MouseEvent> pressHandler = event -> {
+				if (boundStage.get() == null || boundStage.get().isMaximized() || boundStage.get().isFullScreen())
+					return;
+				dx = boundStage.get().getX() - event.getScreenX();
+				dy = boundStage.get().getY() - event.getScreenY();
+				event.consume();
+			};
+
+			private final EventHandler<? super MouseEvent> dragHandler = event -> {
+				if (boundStage.get() == null || boundStage.get().isMaximized() || boundStage.get().isFullScreen())
+					return;
+				boundStage.get().setX(event.getScreenX() + dx);
+				boundStage.get().setY(event.getScreenY() + dy);
+				event.consume();
+			};
+
+			@Override
+			public void changed(ObservableValue<? extends MenuBar> observable, MenuBar oldValue, MenuBar newValue) {
+
+				if (oldValue != null) {
+					oldValue.removeEventFilter(MouseEvent.MOUSE_PRESSED, pressHandler);
+					oldValue.removeEventFilter(MouseEvent.MOUSE_DRAGGED, dragHandler);
+				}
+				if (newValue != null) {
+					newValue.addEventFilter(MouseEvent.MOUSE_PRESSED, pressHandler);
+					newValue.addEventFilter(MouseEvent.MOUSE_DRAGGED, dragHandler);
+				}
+			}
+		});
 	}
 
 	private final ResizeOperator resizer = new ResizeOperator(this, this);

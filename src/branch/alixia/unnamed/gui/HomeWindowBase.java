@@ -10,8 +10,16 @@ import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 public class HomeWindowBase extends UWindowBase {
+
+	public HomeWindowBase(Stage stage) {
+		super(stage);
+	}
+
+	public HomeWindowBase() {
+	}
 
 	protected final VBox right = new VBox(), left = new VBox();
 	protected final ItemBox center = new ItemBox();

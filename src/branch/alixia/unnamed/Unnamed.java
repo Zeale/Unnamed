@@ -59,7 +59,7 @@ public final class Unnamed extends Application {
 	}
 
 	public static void showHome() {
-		HomeWindow root = new HomeWindow();
+		HomeWindow root = new HomeWindow(stage);
 		stage.setScene(new Scene(root, Color.TRANSPARENT));
 		stage.setMinHeight(400);
 		stage.setMinWidth(600);

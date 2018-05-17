@@ -4,8 +4,14 @@ import branch.alixia.kröw.unnamed.guis.updater.UpdateWindowImpl;
 import branch.alixia.unnamed.gui.HomeWindowBase;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 final class HomeWindow extends HomeWindowBase {
+	
+	public HomeWindow(Stage stage) {
+		super(stage);
+	}
+	
 	{
 		new Item("Constructs") {
 
