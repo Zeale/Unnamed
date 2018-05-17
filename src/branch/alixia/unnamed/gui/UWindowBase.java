@@ -30,7 +30,6 @@ public class UWindowBase extends BorderPane implements Resizable {
 	public static final Color SECONDARY_WINDOW_BORDER_COLOR = Unnamed.SECONDARY_WINDOW_BORDER_COLOR;
 
 	private final ObjectProperty<MenuBar> menuBar = new SimpleObjectProperty<>(new DefaultMenuBar());
-
 	private final ObjectProperty<Stage> boundStage = new SimpleObjectProperty<>();
 
 	public UWindowBase(Stage stage) {
@@ -150,5 +149,20 @@ public class UWindowBase extends BorderPane implements Resizable {
 	public final void setResizeEnabled(final boolean resizeEnabled) {
 		this.resizeEnabledProperty().set(resizeEnabled);
 	}
+
+	public final ObjectProperty<Stage> boundStageProperty() {
+		return this.boundStage;
+	}
+	
+
+	public final Stage getBoundStage() {
+		return this.boundStageProperty().get();
+	}
+	
+
+	public final void setBoundStage(final Stage boundStage) {
+		this.boundStageProperty().set(boundStage);
+	}
+	
 
 }

@@ -1,17 +1,19 @@
 package branch.alixia.unnamed;
 
+import branch.alixia.kröw.unnamed.guis.constructs.ConstructWindowImpl;
 import branch.alixia.kröw.unnamed.guis.updater.UpdateWindowImpl;
 import branch.alixia.unnamed.gui.HomeWindowBase;
+import branch.alixia.unnamed.gui.UWindowBase;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 final class HomeWindow extends HomeWindowBase {
-	
+
 	public HomeWindow(Stage stage) {
 		super(stage);
 	}
-	
+
 	{
 		new Item("Constructs") {
 
@@ -21,7 +23,10 @@ final class HomeWindow extends HomeWindowBase {
 
 			@Override
 			protected void activate() {
-				getScene().setRoot(MSGUIs.openConstructWindow());
+				UWindowBase constructs = new ConstructWindowImpl(getBoundStage());
+				getScene().setRoot(constructs);
+				constructs.setBoundStage(getBoundStage());
+				setBoundStage(null);// Lose reference
 			}
 
 		};
@@ -59,7 +64,7 @@ final class HomeWindow extends HomeWindowBase {
 
 			@Override
 			protected void activate() {
-				MSGUIs.setScene(new Scene(new UpdateWindowImpl(), Color.TRANSPARENT));
+				MSGUIs.setScene(new Scene(new UpdateWindowImpl(getBoundStage()), Color.TRANSPARENT));
 			}
 
 		};

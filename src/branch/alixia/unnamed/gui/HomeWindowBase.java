@@ -1,6 +1,5 @@
 package branch.alixia.unnamed.gui;
 
-import branch.alixia.kröw.unnamed.DefaultMenuBar;
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.unnamed.fx.nodes.ItemBox;
 import javafx.scene.control.ScrollPane;

@@ -50,6 +50,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class UpdateWindowImpl extends UWindowBase {
@@ -115,7 +116,8 @@ public class UpdateWindowImpl extends UWindowBase {
 		UPDATE_DOWNLOADS_ROOT.mkdirs();
 	}
 
-	public UpdateWindowImpl() {
+	public UpdateWindowImpl(Stage boundStage) {
+		super(boundStage);
 		refresh();
 	}
 

@@ -46,7 +46,8 @@ import javafx.stage.StageStyle;
 
 public class ConstructWindowImpl extends UWindowBase {
 
-	public ConstructWindowImpl() {
+	public ConstructWindowImpl(Stage boundStage) {
+		super(boundStage);
 	}
 
 	private final static ObservableList<Construct> CONSTRUCT_LIST = FXCollections
