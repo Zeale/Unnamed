@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.function.BiConsumer;
 
-import javax.xml.ws.http.HTTPException;
-
 import branch.alixia.kröw.unnamed.tools.FXTools;
 import branch.alixia.unnamed.Datamap;
 import branch.alixia.unnamed.Images;
@@ -142,35 +140,38 @@ public class UpdateWindowImpl extends UWindowBase {
 
 		// Check remote server for new list.
 		new Thread(() -> {
+			// Get list of version info repos.
+			List<URL> versionLinks;
+
 			try {
-
-				// Get list of version info repos.
-				List<URL> versionLinks = getVersions();
-
-				// Notify user of progress.
-				Platform.runLater(() -> updateCheckerStatus.setText("Gathering update information..."));
-
-				// Gather information.
-				for (int i = 0; i < versionLinks.size(); i++) {
-					URL url = versionLinks.get(i);
-					try {
-						new Version(url);
-						updateCheckerProgress.setProgress((i + 1d) / versionLinks.size());
-					} catch (IOException e) {
-						System.err.println("Failed to show a version (URL: [" + url + "]):");
-						// TODO Show an error directly to the user.
-						e.printStackTrace();
-					}
-				}
-
-				Platform.runLater(() -> {
-					updateCheckerStatus.setText("Done!");
-					updateCheckerStatus.setFill(Color.GREEN);
-				});
+				versionLinks = getVersions();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				updateCheckerStatus.setFill(Color.RED);
+				updateCheckerStatus.setText("Failed to connect to the download site: " + e.getMessage());
+				return;
 			}
+
+			// Notify user of progress.
+			Platform.runLater(() -> updateCheckerStatus.setText("Gathering update information..."));
+
+			// Gather information.
+			for (int i = 0; i < versionLinks.size(); i++) {
+				URL url = versionLinks.get(i);
+				try {
+					new Version(url);
+					updateCheckerProgress.setProgress((i + 1d) / versionLinks.size());
+				} catch (IOException e) {
+					System.err.println("Failed to show a version (URL: [" + url + "]):");
+					// TODO Show an error directly to the user.
+					e.printStackTrace();
+				}
+			}
+
+			Platform.runLater(() -> {
+				updateCheckerStatus.setText("Done!");
+				updateCheckerStatus.setFill(Color.GREEN);
+			});
 
 			checkDownload();
 
