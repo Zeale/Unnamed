@@ -64,7 +64,7 @@ public class UpdateWindowImpl extends UWindowBase {
 		int code = connection.getResponseCode();
 
 		if (code != 200)
-			throw new HTTPException(code);
+			throw new IOException("Failed to connect to " + connection.getURL() + ". Error code: " + code);
 		else {
 
 			List<URL> locations = new ArrayList<>();
