@@ -11,6 +11,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 
 public class UWindowBase extends BorderPane implements Resizable {
@@ -51,12 +52,16 @@ public class UWindowBase extends BorderPane implements Resizable {
 	@Override
 	public void expandHor(double amount) {
 		Window window = getScene().getWindow();
+		if (window instanceof Stage && window.getWidth() + amount < ((Stage) window).getMinWidth())
+			return;
 		window.setWidth(window.getWidth() + amount);
 	}
 
 	@Override
 	public void expandVer(double amount) {
 		Window window = getScene().getWindow();
+		if (window instanceof Stage && window.getHeight() + amount < ((Stage) window).getMinHeight())
+			return;
 		window.setHeight(window.getHeight() + amount);
 	}
 
