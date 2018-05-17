@@ -62,6 +62,8 @@ public class HomeWindowBase extends UWindowBase {
 
 		setBorder(FXTools.getBorderFromColor(Color.BLACK));
 
+		center.resize(1000, 0);// This makes sure that the window doesn't start out too wide.
+
 		if (getMenuBar() != null)
 			getMenuBar().setBorder(new Border(
 					new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(0, 0, 2, 0))));
