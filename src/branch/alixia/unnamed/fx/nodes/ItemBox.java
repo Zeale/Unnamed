@@ -11,6 +11,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
@@ -252,14 +253,17 @@ public class ItemBox extends ScrollPane {
 		setBackground(null);
 		getStylesheets().add("/branch/alixia/kröw/unnamed/stylesheet.css");
 		setPrefViewportHeight(600);
-		setHbarPolicy(ScrollBarPolicy.NEVER);
+		setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
 
 		center.setHgap(50);
 		center.setVgap(80);
 		center.setEffect(shadowEffect);
 		center.setBackground(null);
-		center.setPrefWidth(1000);
-		center.setMinSize(400, 400);
+
+		widthProperty().addListener((ChangeListener<Number>) (observable, oldValue, newValue) -> center
+				.setPrefWidth(newValue.doubleValue() < 600 ? 600 : newValue.doubleValue()));
+
+		center.setMinSize(600, 400);
 		center.setPadding(new Insets(90, 80, 0, 80));
 		center.setAlignment(Pos.CENTER);
 	}
