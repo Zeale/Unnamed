@@ -13,7 +13,11 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -38,7 +42,6 @@ public class UWindowBase extends BorderPane implements Resizable {
 
 	{
 		topProperty().bind(menuBar);
-
 		menuBar.addListener(new ChangeListener<MenuBar>() {
 
 			private double dx, dy;
@@ -59,6 +62,13 @@ public class UWindowBase extends BorderPane implements Resizable {
 				event.consume();
 			};
 
+			{
+				if (menuBar.get() != null) {
+					menuBar.get().addEventFilter(MouseEvent.MOUSE_PRESSED, pressHandler);
+					menuBar.get().addEventFilter(MouseEvent.MOUSE_DRAGGED, dragHandler);
+				}
+			}
+
 			@Override
 			public void changed(ObservableValue<? extends MenuBar> observable, MenuBar oldValue, MenuBar newValue) {
 
@@ -72,6 +82,7 @@ public class UWindowBase extends BorderPane implements Resizable {
 				}
 			}
 		});
+
 	}
 
 	private final ResizeOperator resizer = new ResizeOperator(this, this);
@@ -82,6 +93,10 @@ public class UWindowBase extends BorderPane implements Resizable {
 	{
 		setBackground(FXTools.getBackgroundFromColor(DEFAULT_WINDOW_BACKGROUND_COLOR));
 		setBorder(FXTools.getBorderFromColor(DEFAULT_BORDER_COLOR));
+
+		if (getMenuBar() != null)
+			getMenuBar().setBorder(new Border(new BorderStroke(DEFAULT_BORDER_COLOR, BorderStrokeStyle.SOLID, null,
+					new BorderWidths(0, 0, 2, 0))));
 	}
 
 	protected final ObjectProperty<MenuBar> menuBarProperty() {
@@ -89,11 +104,11 @@ public class UWindowBase extends BorderPane implements Resizable {
 	}
 
 	protected final MenuBar getMenuBar() {
-		return this.menuBarProperty().get();
+		return menuBarProperty().get();
 	}
 
 	protected final void setMenuBar(final MenuBar menuBar) {
-		this.menuBarProperty().set(menuBar);
+		menuBarProperty().set(menuBar);
 	}
 
 	@Override

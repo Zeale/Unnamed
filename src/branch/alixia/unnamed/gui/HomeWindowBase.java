@@ -42,8 +42,6 @@ public class HomeWindowBase extends UWindowBase {
 			bottomRoot = new ScrollPane();
 
 	{
-		// Set Menu Bar
-		setMenuBar(new DefaultMenuBar());
 
 		String stylesheet = "/branch/alixia/kröw/unnamed/stylesheet.css";
 		rightRoot.getStylesheets().add(stylesheet);
@@ -63,9 +61,12 @@ public class HomeWindowBase extends UWindowBase {
 		leftRoot.setMinWidth(100);
 		bottomRoot.setMinHeight(100);
 
-		getMenuBar().setBorder(
-				new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(0, 0, 2, 0))));
-		setBorder(FXTools.getBorderFromColor(Color.BLACK, 2));
+		setBorder(FXTools.getBorderFromColor(Color.BLACK));
+
+		if (getMenuBar() != null)
+			getMenuBar().setBorder(new Border(
+					new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(0, 0, 2, 0))));
+
 		rightRoot.setBorder(
 				new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(0, 0, 0, 2))));
 		leftRoot.setBorder(

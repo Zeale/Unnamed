@@ -240,7 +240,7 @@ public class UpdateWindowImpl extends UWindowBase {
 	private void emptyWindow() {
 		setLeft(null);
 		setRight(null);
-		setBorder(null);
+		setBottom(null);
 		setCenterContent(null);
 		checkDownload();
 	}
