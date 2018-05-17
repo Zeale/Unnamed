@@ -75,6 +75,8 @@ public class ResizeOperator implements EventHandler<MouseEvent> {
 			handleDrag(event);
 		if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED))
 			handleRelease(event);
+		if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED) && inRange(event))
+			event.consume();
 	}
 
 	protected void handleDrag(final MouseEvent e) {
@@ -107,7 +109,7 @@ public class ResizeOperator implements EventHandler<MouseEvent> {
 	}
 
 	protected void handleRelease(final MouseEvent e) {
-		drag=null;
+		drag = null;
 	}
 
 	private boolean inRange(final MouseEvent event) {
