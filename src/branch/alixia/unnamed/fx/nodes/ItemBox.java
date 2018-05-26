@@ -48,6 +48,13 @@ public class ItemBox extends ScrollPane {
 		private final ObjectProperty<String> name = new SimpleObjectProperty<>(UNNAMED_STRING);
 		private final Text defaultTextIcon = new Text(name.get().substring(0, 1).toUpperCase());
 		private final StringProperty defaultTextIconFontFamily = new SimpleStringProperty("Brush Script MT");
+
+		private final ItemBox itemBox = ItemBox.this;
+
+		public ItemBox getItemBox() {
+			return itemBox;
+		}
+
 		{
 			defaultTextIcon.textProperty()
 					.bind(Bindings.createStringBinding(() -> name.get().substring(0, 1).toUpperCase(), name));
@@ -247,6 +254,30 @@ public class ItemBox extends ScrollPane {
 			return view;
 		}
 
+		public final ObjectProperty<String> nameProperty() {
+			return this.name;
+		}
+
+		public final String getName() {
+			return this.nameProperty().get();
+		}
+
+		public final void setName(final String name) {
+			this.nameProperty().set(name);
+		}
+
+		public final StringProperty defaultTextIconFontFamilyProperty() {
+			return this.defaultTextIconFontFamily;
+		}
+
+		public final String getDefaultTextIconFontFamily() {
+			return this.defaultTextIconFontFamilyProperty().get();
+		}
+
+		public final void setDefaultTextIconFontFamily(final String defaultTextIconFontFamily) {
+			this.defaultTextIconFontFamilyProperty().set(defaultTextIconFontFamily);
+		}
+
 	}
 
 	private final DropShadow shadowEffect = new DropShadow(5, 80, 180, new Color(0.1, 0.1, 0.1, 1));
@@ -272,6 +303,42 @@ public class ItemBox extends ScrollPane {
 		center.setMinSize(600, 400);
 		center.setPadding(new Insets(90, 80, 0, 80));
 		center.setAlignment(Pos.CENTER);
+	}
+
+	public final DoubleProperty itemSizeProperty() {
+		return this.itemSize;
+	}
+
+	public final double getItemSize() {
+		return this.itemSizeProperty().get();
+	}
+
+	public final void setItemSize(final double itemSize) {
+		this.itemSizeProperty().set(itemSize);
+	}
+
+	public final DoubleProperty shadowXProperty() {
+		return this.shadowX;
+	}
+
+	public final double getShadowX() {
+		return this.shadowXProperty().get();
+	}
+
+	public final void setShadowX(final double shadowX) {
+		this.shadowXProperty().set(shadowX);
+	}
+
+	public final DoubleProperty shadowYProperty() {
+		return this.shadowY;
+	}
+
+	public final double getShadowY() {
+		return this.shadowYProperty().get();
+	}
+
+	public final void setShadowY(final double shadowY) {
+		this.shadowYProperty().set(shadowY);
 	}
 
 }
