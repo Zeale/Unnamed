@@ -222,16 +222,16 @@ public class ItemBox extends ScrollPane {
 		 * different thread), and they still see an image (the missing texture image)
 		 * while waiting for the actual image to load.
 		 * 
-		 * @param absolutePath
+		 * @param location
 		 *            The absolute path of the image.
 		 * @return The {@link ImageView} that was added to this {@link Item}.
 		 * @see Images
 		 */
-		public final ImageView addImage(String absolutePath) {
+		public final ImageView addImage(String location) {
 
 			ImageView view = new ImageView();
 
-			Images.loadImageInBackground(view, absolutePath);
+			Images.loadImageInBackground(view, location);
 
 			view.fitWidthProperty().bind(itemSize);
 			view.fitHeightProperty().bind(itemSize);

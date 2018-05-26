@@ -1,5 +1,11 @@
 package branch.alixia.unnamed;
 
+import java.awt.Desktop;
+import java.awt.Desktop.Action;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import branch.alixia.kröw.unnamed.guis.constructs.ConstructWindowImpl;
 import branch.alixia.kröw.unnamed.guis.updater.UpdateWindowImpl;
 import branch.alixia.unnamed.gui.HomeWindowBase;
@@ -65,6 +71,25 @@ final class HomeWindow extends HomeWindowBase {
 			@Override
 			protected void activate() {
 				MSGUIs.setScene(new Scene(new UpdateWindowImpl(getBoundStage()), Color.TRANSPARENT));
+			}
+
+		};
+
+		new Item("dusttoash.org") {
+
+			{
+				addImage("http://dusttoash.org/favicon.png");
+			}
+
+			@Override
+			protected void activate() {
+				if (Desktop.isDesktopSupported())
+					if (Desktop.getDesktop().isSupported(Action.BROWSE))
+						try {
+							Desktop.getDesktop().browse(new URI("http://dusttoash.org"));
+						} catch (IOException | URISyntaxException e) {
+							e.printStackTrace();
+						}
 			}
 
 		};
