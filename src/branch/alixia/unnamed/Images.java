@@ -19,6 +19,7 @@ public final class Images {
 		private final InputStream input;
 		private final URL location;
 		private double width, height;
+		private String resource = null;
 
 		private static final BiConsumer<Image, Boolean> convertViewToConsumer(ImageView view) {
 			return (t, u) -> view.setImage(t);
@@ -44,6 +45,20 @@ public final class Images {
 			action = convertViewToConsumer(view);
 			this.location = location;
 			input = null;
+		}
+
+		private LoadItem(ImageView view, String resource) {
+			action = convertViewToConsumer(view);
+			location = null;
+			input = null;
+			this.resource = resource;
+		}
+
+		private LoadItem(BiConsumer<Image, Boolean> action, String resource) {
+			location = null;
+			input = null;
+			this.action = action;
+			this.resource = resource;
 		}
 
 		public void setWidth(double width) {
@@ -77,8 +92,11 @@ public final class Images {
 			while (!loadQueue.isEmpty()) {
 				try {
 					LoadItem item = loadQueue.pop();
-					item.action.accept(new Image(item.input == null ? item.location.openStream() : item.input,
-							item.width, item.height, false, true), true);
+					if (item.resource == null)
+						item.action.accept(new Image(item.input == null ? item.location.openStream() : item.input,
+								item.width, item.height, false, true), true);
+					else
+						item.action.accept(new Image(item.resource, true), true);
 				} catch (Throwable e) {
 					if (!suppressWarnings)
 						e.printStackTrace();
@@ -97,7 +115,14 @@ public final class Images {
 	}
 
 	public static LoadItem loadImageInBackground(ImageView view, String absolutePath) {
-		return loadImageInBackground(view, Images.class.getResourceAsStream(absolutePath));
+		Image randomMissingTextureIcon = getRandomMissingTextureIcon();
+		if (randomMissingTextureIcon != null)
+			view.setImage(randomMissingTextureIcon);
+
+		LoadItem item = new LoadItem(view, absolutePath);
+		loadQueue.push(item);
+		start();
+		return item;
 	}
 
 	/**
