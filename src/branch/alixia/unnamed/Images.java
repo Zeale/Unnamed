@@ -5,6 +5,8 @@ import java.net.URL;
 import java.util.Stack;
 import java.util.function.BiConsumer;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -92,11 +94,75 @@ public final class Images {
 			while (!loadQueue.isEmpty()) {
 				try {
 					LoadItem item = loadQueue.pop();
-					if (item.resource == null)
-						item.action.accept(new Image(item.input == null ? item.location.openStream() : item.input,
-								item.width, item.height, false, true), true);
-					else
-						item.action.accept(new Image(item.resource, true), true);
+
+					final Image image;
+
+					if (item.resource == null) {
+						// This will get loaded ON THIS THREAD. If all goes well, we simply call the
+						// item's action when we're done here.
+						image = new Image(item.input == null ? item.location.openStream() : item.input, item.width,
+								item.height, false, true);
+
+						if (image.isError()) {
+							if (!suppressWarnings)
+								image.getException().printStackTrace();
+						} else
+							item.action.accept(image, true);
+
+					} else {
+						// This will get loaded on a different thread. We need to make sure that that
+						// thread will set give the requesting BiConsumer the loaded image when this
+						// other thread is done loading it (and nothing has gone wrong).
+
+						// Other thread starts loading image.
+						image = new Image(item.resource, true);
+
+						new Object() {
+
+							private ChangeListener<Boolean> errorListener;
+							private ChangeListener<Number> progressListener;
+
+							{
+								// If there is an error, print the stacktrace (if suppressWarnings is off) and
+								// remove the listeners from their respective properties.
+								errorListener = new ChangeListener<Boolean>() {
+
+									@Override
+									public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+											Boolean newValue) {
+										if (newValue) {
+											if (!suppressWarnings)
+												image.getException().printStackTrace();
+											// I'll extract the following to a method to be able to make errorListener
+											// and progressListener final in the next commit. :)
+											image.progressProperty().removeListener(progressListener);
+											image.errorProperty().removeListener(this);
+										}
+									}
+								};
+
+								// Check for completion. When the image is done loading, if there are no errors,
+								// make sure that it gets given to the item's action. (See `item` above.)
+								progressListener = new ChangeListener<Number>() {
+
+									@Override
+									public void changed(ObservableValue<? extends Number> observable, Number oldValue,
+											Number newValue) {
+										if (newValue.doubleValue() == 1 && !image.isError()) {
+											item.action.accept(image, true);
+											image.progressProperty().removeListener(this);
+											image.errorProperty().removeListener(errorListener);
+										}
+									}
+								};
+
+								// Now that we're done creating those listeners, let's put 'em to use!
+								image.errorProperty().addListener(errorListener);
+								image.progressProperty().addListener(progressListener);
+							}
+						};
+					}
+
 				} catch (Throwable e) {
 					if (!suppressWarnings)
 						e.printStackTrace();
