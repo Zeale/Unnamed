@@ -61,6 +61,9 @@ final class HomeWindow extends HomeWindowBase {
 					}
 		}).setColor(Color.GOLD);
 
+		new Item("Modules", Images.GRAPHICS_LOCATION + "Modules Icon-1024px.png", null)
+				.setColor(Color.MEDIUMSPRINGGREEN);
+
 	}
 
 }
