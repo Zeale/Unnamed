@@ -21,79 +21,45 @@ final class HomeWindow extends HomeWindowBase {
 	}
 
 	{
-		new Item("Constructs") {
 
-			{
-				addImage(Images.GRAPHICS_LOCATION + "Construct Icon-1024px.png");
+		class Item extends HomeWindowBase.Item {
+
+			private final Runnable onActivated;
+
+			private Item(String name, String iconLocation, Runnable onActivated) {
+				super(name);
+				addImage(iconLocation);
+				this.onActivated = onActivated;
 			}
 
 			@Override
 			protected void activate() {
-				UWindowBase constructs = new ConstructWindowImpl(getBoundStage());
-				getScene().setRoot(constructs);
-				constructs.setBoundStage(getBoundStage());
-				setBoundStage(null);// Lose reference
+				if (onActivated != null)
+					onActivated.run();
 			}
+		}
 
-		};
+		new Item("Constructs", Images.GRAPHICS_LOCATION + "Construct Icon-1024px.png", () -> {
+			UWindowBase constructs = new ConstructWindowImpl(getBoundStage());
+			getScene().setRoot(constructs);
+			constructs.setBoundStage(getBoundStage());
+			setBoundStage(null);// Lose reference
+		});
 
-		new Item("Laws") {
-
-			{
-				addImage(Images.GRAPHICS_LOCATION + "Law Icon-1024px.png");
-			}
-
-			@Override
-			protected void activate() {
-
-			}
-		};
-
-		new Item("Complexes") {
-
-			{
-				addImage(Images.GRAPHICS_LOCATION + "Complex Icon-1024px.png");
-			}
-
-			@Override
-			protected void activate() {
-
-			}
-		};
-
-		new Item("Updates") {
-
-			{
-				addImage(Images.GRAPHICS_LOCATION + "Updates Icon-1024px.png");
-				setColor(Color.RED);
-			}
-
-			@Override
-			protected void activate() {
-				MSGUIs.setScene(new Scene(new UpdateWindowImpl(getBoundStage()), Color.TRANSPARENT));
-			}
-
-		};
-
-		new Item("dusttoash.org") {
-
-			{
-				addImage("http://dusttoash.org/favicon.png");
-				setColor(Color.GOLD);
-			}
-
-			@Override
-			protected void activate() {
-				if (Desktop.isDesktopSupported())
-					if (Desktop.getDesktop().isSupported(Action.BROWSE))
-						try {
-							Desktop.getDesktop().browse(new URI("http://dusttoash.org"));
-						} catch (IOException | URISyntaxException e) {
-							e.printStackTrace();
-						}
-			}
-
-		};
+		new Item("Laws", Images.GRAPHICS_LOCATION + "Law Icon-1024px.png", null);
+		new Item("Complexes", Images.GRAPHICS_LOCATION + "Complex Icon-1024px.png", null);
+		new Item("Updates", Images.GRAPHICS_LOCATION + "Updates Icon-1024px.png",
+				() -> MSGUIs.setScene(new Scene(new UpdateWindowImpl(getBoundStage()), Color.TRANSPARENT)))
+						.setColor(Color.RED);
+		new Item("Website", "http://dusttoash.org/favicon.png", () -> {
+			if (Desktop.isDesktopSupported())
+				if (Desktop.getDesktop().isSupported(Action.BROWSE))
+					try {
+						Desktop.getDesktop().browse(new URI("http://dusttoash.org"));
+					} catch (IOException | URISyntaxException e) {
+						e.printStackTrace();
+					}
+		}).setColor(Color.GOLD);
 
 	}
 
