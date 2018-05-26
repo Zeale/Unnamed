@@ -65,7 +65,7 @@ final class HomeWindow extends HomeWindowBase {
 
 			{
 				addImage(Images.GRAPHICS_LOCATION + "Updates Icon-1024px.png");
-				setTextToColor(Color.RED);
+				setColor(Color.RED);
 			}
 
 			@Override
@@ -79,6 +79,7 @@ final class HomeWindow extends HomeWindowBase {
 
 			{
 				addImage("http://dusttoash.org/favicon.png");
+				setColor(Color.GOLD);
 			}
 
 			@Override

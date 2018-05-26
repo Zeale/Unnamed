@@ -145,7 +145,7 @@ public class ItemBox extends ScrollPane {
 					activate();
 			});
 
-			setBorderColor(Color.BLACK);
+			setColor(Color.BLUE);
 
 			// Must be called underneath wrapper's definition.
 			add();
@@ -166,6 +166,12 @@ public class ItemBox extends ScrollPane {
 
 		public void setTextToColor(Color color) {
 			animation.setToTextColor(color);
+		}
+
+		public void setColor(Color color) {
+			setTextToColor(color);
+			setBorderColor(color);
+			setBorderToColor(color);
 		}
 
 		public void setBorderToColor(Color color) {
