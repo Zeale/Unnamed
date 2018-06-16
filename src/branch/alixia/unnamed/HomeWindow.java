@@ -46,12 +46,10 @@ final class HomeWindow extends HomeWindowBase {
 			setBoundStage(null);// Lose reference
 		});
 
-		new Item("Laws", Images.GRAPHICS_LOCATION + "Law Icon-1024px.png", null);
-		new Item("Complexes", Images.GRAPHICS_LOCATION + "Complex Icon-1024px.png", null);
 		new Item("Updates", Images.GRAPHICS_LOCATION + "Updates Icon-1024px.png",
 				() -> MSGUIs.setScene(new Scene(new UpdateWindowImpl(getBoundStage()), Color.TRANSPARENT)))
 						.setColor(Color.RED);
-		new Item("Website", "http://dusttoash.org/favicon.png", () -> {
+		new Item("Website", "http://dusttoash.org/favicon/KröwV1.png", () -> {
 			if (Desktop.isDesktopSupported())
 				if (Desktop.getDesktop().isSupported(Action.BROWSE))
 					try {
@@ -61,8 +59,13 @@ final class HomeWindow extends HomeWindowBase {
 					}
 		}).setColor(Color.GOLD);
 
-		new Item("Modules", Images.GRAPHICS_LOCATION + "Modules Icon-1024px.png", null)
-				.setColor(Color.MEDIUMSPRINGGREEN);
+		new Item("Math", Images.GRAPHICS_LOCATION + "Math Icon-1024px.png", new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Open math window
+			}
+		});
 
 	}
 

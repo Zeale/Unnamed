@@ -3,6 +3,7 @@ package branch.alixia.unnamed;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Stack;
+import java.util.concurrent.Callable;
 import java.util.function.BiConsumer;
 
 import javafx.beans.value.ChangeListener;
@@ -18,6 +19,7 @@ public final class Images {
 	public final static class LoadItem {
 
 		private final BiConsumer<Image, Boolean> action;
+		private Callable<Image> initializer;
 		private final InputStream input;
 		private final URL location;
 		private double width, height;
@@ -25,6 +27,13 @@ public final class Images {
 
 		private static final BiConsumer<Image, Boolean> convertViewToConsumer(ImageView view) {
 			return (t, u) -> view.setImage(t);
+		}
+
+		public LoadItem(BiConsumer<Image, Boolean> action, Callable<Image> initializer) {
+			this.action = action;
+			this.initializer = initializer;
+			input = null;
+			location = null;
 		}
 
 		private LoadItem(ImageView view, InputStream inputStream) {
@@ -44,16 +53,11 @@ public final class Images {
 		}
 
 		private LoadItem(ImageView view, URL location) {
-			action = convertViewToConsumer(view);
-			this.location = location;
-			input = null;
+			this(convertViewToConsumer(view), location);
 		}
 
 		private LoadItem(ImageView view, String resource) {
-			action = convertViewToConsumer(view);
-			location = null;
-			input = null;
-			this.resource = resource;
+			this(convertViewToConsumer(view), resource);
 		}
 
 		private LoadItem(BiConsumer<Image, Boolean> action, String resource) {
@@ -95,8 +99,13 @@ public final class Images {
 				try {
 					LoadItem item = loadQueue.pop();
 
-					final Image image;
+					if (item.initializer != null) {
+						System.out.println("Calling");
+						item.action.accept(item.initializer.call(), true);
+						continue;
+					}
 
+					final Image image;
 					if (item.resource == null) {
 						// This will get loaded ON THIS THREAD. If all goes well, we simply call the
 						// item's action when we're done here.
@@ -231,6 +240,17 @@ public final class Images {
 		LoadItem item = loadImageInBackground(action, location);
 		item.setWidth(width);
 		item.setHeight(height);
+		return item;
+	}
+
+	public static LoadItem loadImageInBackground(BiConsumer<Image, Boolean> imageReceiver, Callable<Image> loader) {
+		Image randomMissingTextureIcon = getRandomMissingTextureIcon();
+		if (randomMissingTextureIcon != null)
+			imageReceiver.accept(randomMissingTextureIcon, false);
+
+		LoadItem item = new LoadItem(imageReceiver, loader);
+		loadQueue.push(item);
+		start();
 		return item;
 	}
 
